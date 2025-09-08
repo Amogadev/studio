@@ -249,7 +249,18 @@ export default function DashboardPage() {
     }
   };
 
-  const handleAddAccount = () => {
+  const handleAddAccount = async () => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      toast({
+        variant: "destructive",
+        title: "Authentication Error",
+        description: "You are not logged in.",
+      });
+      router.push("/");
+      return;
+    }
+    
     if (!newAccountId || !newAccountName) {
       toast({
         variant: "destructive",
@@ -259,14 +270,13 @@ export default function DashboardPage() {
       return;
     }
 
+    // In a real app, you would make an API call here to save the new account.
+    // For now, we'll just add it to the local state.
     const newStore: Store = {
       id: newAccountId,
       name: newAccountName,
     };
-    
-    // In a real app, you would make an API call here to save the new account.
-    // For now, we'll just add it to the local state.
-    setStores([...stores, newStore]);
+    setStores([...stores, newStore].sort((a, b) => a.name.localeCompare(b.name)));
     
     toast({
       title: "Account Added",
