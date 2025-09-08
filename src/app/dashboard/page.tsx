@@ -92,12 +92,30 @@ export default function DashboardPage() {
     <SidebarProvider>
       <Sidebar>
         <SidebarHeader>
-          <CardTitle>All Expenses List</CardTitle>
+          <CardTitle>Filters</CardTitle>
         </SidebarHeader>
         <SidebarContent>
-          <SidebarGroup>
-            <SidebarGroupContent>
-              <div className="space-y-4">
+        </SidebarContent>
+        <SidebarFooter>
+          <Button variant="ghost" onClick={handleLogout}>
+            <LogOut className="mr-2" /> Logout
+          </Button>
+        </SidebarFooter>
+      </Sidebar>
+      <SidebarInset>
+        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <SidebarTrigger className="md:hidden" />
+              <h1 className="text-2xl font-semibold">Expense Detail</h1>
+            </div>
+            <div className="flex items-center gap-4">
+              <Button>Add New</Button>
+            </div>
+          </div>
+          <Card>
+            <CardContent className="pt-6">
+              <div className="grid grid-cols-1 items-end gap-4 md:grid-cols-2 lg:grid-cols-5">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">From Date</label>
                   <Popover>
@@ -156,42 +174,21 @@ export default function DashboardPage() {
                     </PopoverContent>
                   </Popover>
                 </div>
-              </div>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        </SidebarContent>
-        <SidebarFooter>
-          <Button variant="ghost" onClick={handleLogout}>
-            <LogOut className="mr-2" /> Logout
-          </Button>
-        </SidebarFooter>
-      </Sidebar>
-      <SidebarInset>
-        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <SidebarTrigger className="md:hidden" />
-              <h1 className="text-2xl font-semibold">Expense Detail</h1>
-            </div>
-            <div className="flex items-center gap-4">
-              <Button>Add New</Button>
-            </div>
-          </div>
-          <Card>
-            <CardContent className="pt-6">
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a store" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {stores.map((store) => (
-                      <SelectItem key={store.id} value={store.name}>
-                        {store.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Store</label>
+                  <Select>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a store" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {stores.map((store) => (
+                        <SelectItem key={store.id} value={store.name}>
+                          {store.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
                 <Button>Get Details</Button>
               </div>
             </CardContent>
