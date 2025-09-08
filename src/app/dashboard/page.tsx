@@ -48,7 +48,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const stores = [
+const initialStores = [
   { id: "12", name: "Combai" },
   { id: "15", name: "Dayton" },
   { id: "20", name: "Highway" },
@@ -83,6 +83,11 @@ interface Expense {
   amount: number;
 }
 
+interface Store {
+  id: string;
+  name: string;
+}
+
 export default function DashboardPage() {
   const [fromDate, setFromDate] = React.useState<Date | undefined>();
   const [toDate, setToDate] = React.useState<Date | undefined>();
@@ -97,6 +102,10 @@ export default function DashboardPage() {
   const [newExpenseDate, setNewExpenseDate] = React.useState<Date | undefined>();
   const [newExpenseAmount, setNewExpenseAmount] = React.useState<string>("");
 
+  const [isAddAccountOpen, setAddAccountOpen] = React.useState(false);
+  const [newAccountId, setNewAccountId] = React.useState("");
+  const [newAccountName, setNewAccountName] = React.useState("");
+  const [stores, setStores] = React.useState<Store[]>(initialStores);
 
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
@@ -240,6 +249,34 @@ export default function DashboardPage() {
     }
   };
 
+  const handleAddAccount = () => {
+    if (!newAccountId || !newAccountName) {
+      toast({
+        variant: "destructive",
+        title: "Missing Information",
+        description: "Please provide both an ID and a name for the new account.",
+      });
+      return;
+    }
+
+    const newStore: Store = {
+      id: newAccountId,
+      name: newAccountName,
+    };
+    
+    // In a real app, you would make an API call here to save the new account.
+    // For now, we'll just add it to the local state.
+    setStores([...stores, newStore]);
+    
+    toast({
+      title: "Account Added",
+      description: `The account "${newAccountName}" has been added.`,
+    });
+    
+    setAddAccountOpen(false);
+    setNewAccountId("");
+    setNewAccountName("");
+  };
 
   return (
     <div className="flex h-screen w-full flex-col">
@@ -337,7 +374,7 @@ export default function DashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Expense Detail</CardTitle>
-            <Button>Add Account</Button>
+            <Button onClick={() => setAddAccountOpen(true)}>Add Account</Button>
           </CardHeader>
           <CardContent>
             <Table>
@@ -454,8 +491,46 @@ export default function DashboardPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      
+      <Dialog open={isAddAccountOpen} onOpenChange={setAddAccountOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Add New Account</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="accountId" className="text-right">
+                Account ID
+              </Label>
+              <Input
+                id="accountId"
+                value={newAccountId}
+                onChange={(e) => setNewAccountId(e.target.value)}
+                className="col-span-3"
+                placeholder="Enter account ID"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="accountName" className="text-right">
+                Account Name
+              </Label>
+              <Input
+                id="accountName"
+                value={newAccountName}
+                onChange={(e) => setNewAccountName(e.target.value)}
+                className="col-span-3"
+                placeholder="Enter account name"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DialogClose>
+            <Button onClick={handleAddAccount}>Add Account</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
-
-    
