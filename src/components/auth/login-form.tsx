@@ -52,8 +52,8 @@ export function LoginForm() {
 
   return (
     <Card className="mx-auto w-full max-w-sm shadow-xl">
-      <CardHeader>
-        <CardTitle className="text-2xl font-headline">Login</CardTitle>
+      <CardHeader className="text-center">
+        <CardTitle className="text-2xl font-headline">SIGN IN</CardTitle>
         <CardDescription>
           Enter your email below to login to your account
         </CardDescription>
