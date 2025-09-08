@@ -82,11 +82,11 @@ export function LoginForm() {
           <Shield className="h-8 w-8" />
           ADMIN
         </CardTitle>
-        <CardDescription>SIGN IN</CardDescription>
       </CardHeader>
       <CardContent className="px-0">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 grid gap-6">
+            <CardDescription>SIGN IN</CardDescription>
             <FormField
               control={form.control}
               name="email"
