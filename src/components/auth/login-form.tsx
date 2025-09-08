@@ -86,7 +86,7 @@ export function LoginForm() {
       <CardContent className="px-0">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 grid gap-6">
-            <CardDescription className="pb-4 text-lg">SIGN IN</CardDescription>
+            <CardDescription className="text-lg">SIGN IN</CardDescription>
             <FormField
               control={form.control}
               name="email"
