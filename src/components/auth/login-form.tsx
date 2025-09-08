@@ -77,8 +77,8 @@ export function LoginForm() {
 
   return (
     <div className="w-full max-w-sm">
-      <CardHeader className="px-0 pt-0 text-left">
-        <CardTitle className="flex items-center gap-2 text-3xl font-bold">
+      <CardHeader className="px-0 pt-4 text-center">
+        <CardTitle className="flex items-center justify-center gap-2 text-3xl font-bold">
           <Shield className="h-8 w-8" />
           ADMIN
         </CardTitle>
@@ -86,7 +86,7 @@ export function LoginForm() {
       <CardContent className="px-0">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 grid gap-6">
-            <CardDescription>SIGN IN</CardDescription>
+            <CardDescription className="text-center">SIGN IN</CardDescription>
             <FormField
               control={form.control}
               name="email"
