@@ -82,7 +82,7 @@ export function LoginForm() {
           <Shield className="h-8 w-8" />
           ADMIN
         </CardTitle>
-        <CardDescription>Unlock you world.</CardDescription>
+        <CardDescription>SIGN IN</CardDescription>
       </CardHeader>
       <CardContent className="px-0">
         <Form {...form}>
