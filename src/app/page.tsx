@@ -6,12 +6,12 @@ export default function Home() {
   return (
     <main className="grid min-h-screen w-full items-center justify-center md:grid-cols-2">
       <div className="relative hidden h-full items-center justify-center bg-muted/20 p-10 md:flex">
-        <div className="relative h-[600px] w-[400px]">
+        <div className="relative h-[450px] w-[300px]">
           <Image
             src="/logg_in.png"
             alt="Professional working on a laptop"
-            width={400}
-            height={600}
+            width={300}
+            height={450}
             className="rounded-lg object-cover"
             data-ai-hint="professional laptop"
           />
