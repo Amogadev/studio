@@ -169,18 +169,12 @@ export default function DashboardPage() {
         </Card>
         
         <Card>
-          <CardHeader>
-              <CardTitle>Total Amount</CardTitle>
-              <CardDescription>₹ 0.00</CardDescription>
-          </CardHeader>
-          <CardContent>
-              <Button>Add Account</Button>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>All expense List</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <div>
+              <CardTitle>All expense List</CardTitle>
+              <CardDescription>Total Amount: ₹ 0.00</CardDescription>
+            </div>
+            <Button>Add Account</Button>
           </CardHeader>
           <CardContent>
             <Table>
