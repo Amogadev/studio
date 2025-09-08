@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -106,6 +105,16 @@ export default function DashboardPage() {
   const [newAccountId, setNewAccountId] = React.useState("");
   const [newAccountName, setNewAccountName] = React.useState("");
   const [stores, setStores] = React.useState<Store[]>(initialStores);
+  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+
+  React.useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      router.push("/");
+    } else {
+      setIsAuthenticated(true);
+    }
+  }, [router]);
 
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
@@ -287,6 +296,10 @@ export default function DashboardPage() {
     setNewAccountId("");
     setNewAccountName("");
   };
+
+  if (!isAuthenticated) {
+    return null; // or a loading spinner
+  }
 
   return (
     <div className="flex h-screen w-full flex-col">
