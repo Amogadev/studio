@@ -163,7 +163,7 @@ export default function DashboardPage() {
                   </PopoverContent>
                 </Popover>
               </div>
-              <Button>Get Details</Button>
+              <Button>Get Expenses</Button>
             </div>
           </CardContent>
         </Card>
