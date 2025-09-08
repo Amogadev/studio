@@ -68,7 +68,7 @@ export function LoginForm() {
                     Email
                   </FormLabel>
                   <FormControl>
-                    <Input placeholder="email" {...field} />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
