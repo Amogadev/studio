@@ -7,11 +7,12 @@ export default function Home() {
       <div className="relative hidden h-full items-center justify-center bg-muted/20 p-10 md:flex">
         <div className="relative h-[600px] w-[400px]">
           <Image
-            src="/log_in.png"
-            alt="Login illustration"
+            src="https://picsum.photos/400/600"
+            alt="Professional working on a laptop"
             width={400}
             height={600}
             className="rounded-lg object-cover"
+            data-ai-hint="professional laptop"
           />
         </div>
       </div>
