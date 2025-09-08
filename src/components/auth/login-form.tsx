@@ -27,7 +27,7 @@ import { Shield, Eye, EyeOff } from "lucide-react";
 import React from "react";
 
 const formSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email." }),
+  email: z.string().min(1, { message: "Email is required." }),
   password: z.string().min(1, { message: "Password is required." }),
 });
 
@@ -38,7 +38,7 @@ export function LoginForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "demo@example.com",
+      email: "demo",
       password: "demo",
     },
   });
