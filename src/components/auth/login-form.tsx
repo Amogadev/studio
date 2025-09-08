@@ -22,6 +22,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { Mail, Lock } from "lucide-react";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -66,7 +67,10 @@ export function LoginForm() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel className="flex items-center">
+                    <Mail className="mr-2 h-4 w-4" />
+                    Email
+                  </FormLabel>
                   <FormControl>
                     <Input placeholder="name@example.com" {...field} />
                   </FormControl>
@@ -80,7 +84,10 @@ export function LoginForm() {
               render={({ field }) => (
                 <FormItem>
                   <div className="flex items-center">
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel className="flex items-center">
+                      <Lock className="mr-2 h-4 w-4" />
+                      Password
+                    </FormLabel>
                     <Link
                       href="#"
                       className="ml-auto inline-block text-sm text-primary underline-offset-4 hover:underline"
