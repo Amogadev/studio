@@ -107,6 +107,12 @@ export function LoginForm() {
             </Button>
           </form>
         </Form>
+        <div className="mt-4 text-center text-sm">
+          Don&apos;t have an account?{' '}
+          <Link href="#" className="text-primary underline-offset-4 hover:underline">
+            Get Started
+          </Link>
+        </div>
       </CardContent>
     </Card>
   );
