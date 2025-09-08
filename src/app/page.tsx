@@ -3,16 +3,15 @@ import { LoginForm } from "@/components/auth/login-form";
 
 export default function Home() {
   return (
-    <main className="min-h-screen w-full grid grid-cols-1 md:grid-cols-2 items-center">
-      <div className="relative hidden md:flex flex-col items-center justify-center bg-muted/20 p-10 h-full">
+    <main className="grid min-h-screen w-full items-center md:grid-cols-2">
+      <div className="relative hidden h-full items-center justify-center bg-muted/20 p-10 md:flex">
         <div className="relative h-[600px] w-[400px]">
           <Image
-            src="https://picsum.photos/400/600"
+            src="/log_in.png"
             alt="Login illustration"
             width={400}
             height={600}
-            className="object-cover rounded-lg"
-            data-ai-hint="login illustration"
+            className="rounded-lg object-cover"
           />
         </div>
       </div>
