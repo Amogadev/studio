@@ -117,17 +117,19 @@ export function LoginForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full mt-2">
-              Sign In
-            </Button>
+            <div className="flex items-center justify-between mt-2">
+               <Button type="submit">
+                Sign In
+              </Button>
+              <div className="text-sm">
+                Don&apos;t have an account ?{' '}
+                <Link href="#" className="text-primary underline-offset-4 hover:underline">
+                  Get Started
+                </Link>
+              </div>
+            </div>
           </form>
         </Form>
-        <div className="mt-4 text-center text-sm">
-          Don&apos;t have an account ?{' '}
-          <Link href="#" className="text-primary underline-offset-4 hover:underline">
-            Get Started
-          </Link>
-        </div>
       </CardContent>
     </Card>
   );
