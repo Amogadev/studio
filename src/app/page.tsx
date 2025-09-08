@@ -1,13 +1,14 @@
+
 import Image from "next/image";
 import { LoginForm } from "@/components/auth/login-form";
 
 export default function Home() {
   return (
-    <main className="grid min-h-screen w-full items-center md:grid-cols-2">
+    <main className="grid min-h-screen w-full items-center justify-center md:grid-cols-2">
       <div className="relative hidden h-full items-center justify-center bg-muted/20 p-10 md:flex">
         <div className="relative h-[600px] w-[400px]">
           <Image
-            src="https://picsum.photos/400/600"
+            src="/logg_in.png"
             alt="Professional working on a laptop"
             width={400}
             height={600}
