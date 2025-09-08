@@ -17,7 +17,6 @@ import { Input } from "@/components/ui/input";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -80,18 +79,10 @@ export function LoginForm() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <div className="flex items-center">
-                    <FormLabel className="flex items-center">
-                      <Lock className="mr-2 h-4 w-4" />
-                      Password
-                    </FormLabel>
-                    <Link
-                      href="#"
-                      className="ml-auto inline-block text-sm text-primary underline-offset-4 hover:underline"
-                    >
-                      Forgot your password?
-                    </Link>
-                  </div>
+                  <FormLabel className="flex items-center">
+                    <Lock className="mr-2 h-4 w-4" />
+                    Password
+                  </FormLabel>
                   <FormControl>
                     <Input type="password" {...field} />
                   </FormControl>
