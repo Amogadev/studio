@@ -54,6 +54,10 @@ export function LoginForm() {
       });
 
       if (response.ok) {
+        const data = await response.json();
+        if (data.accessToken) {
+          localStorage.setItem('accessToken', data.accessToken);
+        }
         toast({
           title: "Login Successful",
           description: "Redirecting to your dashboard.",
