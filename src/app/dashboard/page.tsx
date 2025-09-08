@@ -40,7 +40,6 @@ import {
   SidebarProvider,
   Sidebar,
   SidebarHeader,
-  SidebarContent,
   SidebarTrigger,
   SidebarInset,
   SidebarFooter,
@@ -94,8 +93,6 @@ export default function DashboardPage() {
         <SidebarHeader>
           <CardTitle>Filters</CardTitle>
         </SidebarHeader>
-        <SidebarContent>
-        </SidebarContent>
         <SidebarFooter>
           <Button variant="ghost" onClick={handleLogout}>
             <LogOut className="mr-2" /> Logout
