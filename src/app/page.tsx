@@ -7,9 +7,10 @@ export default function Home() {
       <div className="relative hidden md:flex flex-col items-center justify-center bg-muted/20 p-10">
         <div className="relative h-[600px] w-[400px]">
           <Image
-            src="https://picsum.photos/400/600"
+            src="/log_in.png"
             alt="Login illustration"
-            fill
+            width={400}
+            height={600}
             className="object-cover rounded-lg"
             data-ai-hint="login illustration"
           />
