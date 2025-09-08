@@ -11,9 +11,8 @@ const LoginIllustration = () => (
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <path d="M8 11V7a4 4 0 1 1 8 0v4" />
-      <path d="M12 21a9 9 0 1 1 0-18 9 9 0 0 1 0 18Z" />
-      <path d="M12 16a2 2 0 0 1-2-2v-2a2 2 0 1 1 4 0v2a2 2 0 0 1-2 2Z" />
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
     </svg>
   );
 
