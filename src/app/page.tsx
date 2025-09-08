@@ -20,7 +20,8 @@ const LoginIllustration = () => (
 export default function Home() {
   return (
     <main className="min-h-screen w-full grid grid-cols-1 md:grid-cols-2">
-      <div className="relative hidden md:flex items-center justify-center bg-muted/20 p-10">
+      <div className="relative hidden md:flex flex-col items-center justify-center bg-muted/20 p-10">
+        <h1 className="text-4xl font-bold text-primary mb-4">Hi,</h1>
         <LoginIllustration />
       </div>
       <div className="col-span-1 flex items-center justify-center p-6 sm:p-12">
