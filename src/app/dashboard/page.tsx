@@ -37,6 +37,16 @@ import { Calendar as CalendarIcon, LogOut } from "lucide-react";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const stores = [
   { id: "12", name: "Combai" },
@@ -81,6 +91,12 @@ export default function DashboardPage() {
   const [totalAmount, setTotalAmount] = React.useState<number>(0);
   const router = useRouter();
   const { toast } = useToast();
+
+  const [isAddExpenseOpen, setAddExpenseOpen] = React.useState(false);
+  const [newExpenseStore, setNewExpenseStore] = React.useState<string>("");
+  const [newExpenseDate, setNewExpenseDate] = React.useState<Date | undefined>();
+  const [newExpenseAmount, setNewExpenseAmount] = React.useState<string>("");
+
 
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
@@ -157,6 +173,72 @@ export default function DashboardPage() {
       setTotalAmount(0);
     }
   };
+  
+  const handleAddExpense = async () => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      toast({
+        variant: "destructive",
+        title: "Authentication Error",
+        description: "You are not logged in.",
+      });
+      router.push("/");
+      return;
+    }
+    
+    if (!newExpenseStore || !newExpenseDate || !newExpenseAmount) {
+      toast({
+        variant: "destructive",
+        title: "Missing Information",
+        description: "Please fill out all fields for the new expense.",
+      });
+      return;
+    }
+
+    try {
+      const response = await fetch('https://tnfl2-cb6ea45c64b3.herokuapp.com/services/expenses/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          club: newExpenseStore,
+          date: format(newExpenseDate, 'yyyy-MM-dd'),
+          amount: parseFloat(newExpenseAmount),
+        }),
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Expense Added",
+          description: "The new expense has been successfully added.",
+        });
+        setAddExpenseOpen(false);
+        // Reset form
+        setNewExpenseStore("");
+        setNewExpenseDate(undefined);
+        setNewExpenseAmount("");
+        // Optionally, refresh the expenses list
+        if (selectedStore && fromDate && toDate) {
+          handleGetExpenses();
+        }
+      } else {
+        const errorData = await response.json();
+        toast({
+          variant: "destructive",
+          title: "Failed to Add Expense",
+          description: errorData.message || "An error occurred while adding the expense.",
+        });
+      }
+    } catch (error) {
+       toast({
+        variant: "destructive",
+        title: "An Error Occurred",
+        description: "Something went wrong. Please try again later.",
+      });
+    }
+  };
 
 
   return (
@@ -164,7 +246,7 @@ export default function DashboardPage() {
       <header className="flex h-16 items-center justify-between border-b bg-background px-4 md:px-6">
         <h1 className="text-xl font-semibold">WELCOME</h1>
         <div className="flex items-center gap-4">
-          <Button>Add New Expense</Button>
+          <Button onClick={() => setAddExpenseOpen(true)}>Add New Expense</Button>
           <Button variant="ghost" onClick={handleLogout}>
             <LogOut className="mr-2" /> Logout
           </Button>
@@ -267,13 +349,19 @@ export default function DashboardPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {expenses.map((expense, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{expense.storeName}</TableCell>
-                    <TableCell>{format(new Date(expense.date), 'PPP')}</TableCell>
-                    <TableCell className="text-right">₹ {expense.amount.toFixed(2)}</TableCell>
+                {expenses.length > 0 ? (
+                  expenses.map((expense, index) => (
+                    <TableRow key={index}>
+                      <TableCell>{expense.storeName}</TableCell>
+                      <TableCell>{format(new Date(expense.date), 'PPP')}</TableCell>
+                      <TableCell className="text-right">₹ {expense.amount.toFixed(2)}</TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={3} className="text-center">No expenses to display.</TableCell>
                   </TableRow>
-                ))}
+                )}
               </TableBody>
               <TableFooter>
                 <TableRow>
@@ -285,6 +373,89 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       </main>
+
+      <Dialog open={isAddExpenseOpen} onOpenChange={setAddExpenseOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Add New Expense</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="store" className="text-right">
+                Store
+              </Label>
+              <div className="col-span-3">
+                <Select value={newExpenseStore} onValueChange={setNewExpenseStore}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a store" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {stores.map((store) => (
+                      <SelectItem key={store.id} value={store.id}>
+                        {store.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="date" className="text-right">
+                Date
+              </Label>
+              <div className="col-span-3">
+                <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !newExpenseDate && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {newExpenseDate ? (
+                          format(newExpenseDate, "PPP")
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        selected={newExpenseDate}
+                        onSelect={setNewExpenseDate}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="amount" className="text-right">
+                Amount
+              </Label>
+              <Input
+                id="amount"
+                type="number"
+                value={newExpenseAmount}
+                onChange={(e) => setNewExpenseAmount(e.target.value)}
+                className="col-span-3"
+                placeholder="Enter amount"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DialogClose>
+            <Button onClick={handleAddExpense}>Add Expense</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
+
+    
