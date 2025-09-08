@@ -77,8 +77,8 @@ export function LoginForm() {
 
   return (
     <div className="w-full max-w-sm">
-      <CardHeader className="px-0 pt-4 text-center">
-        <CardTitle className="flex items-center justify-center gap-2 text-3xl font-bold">
+      <CardHeader className="px-0 pt-4">
+        <CardTitle className="flex items-center gap-2 text-3xl font-bold">
           <Shield className="h-8 w-8" />
           ADMIN
         </CardTitle>
