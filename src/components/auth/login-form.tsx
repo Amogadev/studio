@@ -24,6 +24,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { Shield } from "lucide-react";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email." }),
@@ -77,7 +78,10 @@ export function LoginForm() {
   return (
     <div className="w-full max-w-sm">
       <CardHeader className="px-0 pt-0 text-left">
-        <CardTitle className="text-3xl font-bold">Sign In</CardTitle>
+        <CardTitle className="flex items-center gap-2 text-3xl font-bold">
+          <Shield className="h-8 w-8" />
+          ADMIN
+        </CardTitle>
         <CardDescription>Unlock you world.</CardDescription>
       </CardHeader>
       <CardContent className="px-0">
