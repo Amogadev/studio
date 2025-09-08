@@ -44,18 +44,35 @@ export function LoginForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    if (values.email === "demo@example.com" && values.password === "demo") {
-      toast({
-        title: "Login Successful",
-        description: "Redirecting to your dashboard.",
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      const response = await fetch('https://tnfl2-cb6ea45c64b3.herokuapp.com/services/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
       });
-      router.push("/dashboard");
-    } else {
+
+      if (response.ok) {
+        toast({
+          title: "Login Successful",
+          description: "Redirecting to your dashboard.",
+        });
+        router.push("/dashboard");
+      } else {
+        const errorData = await response.json();
+        toast({
+          variant: "destructive",
+          title: "Login Failed",
+          description: errorData.message || "Please check your credentials and try again.",
+        });
+      }
+    } catch (error) {
       toast({
         variant: "destructive",
-        title: "Invalid Credentials",
-        description: "Please check your email and password.",
+        title: "An Error Occurred",
+        description: "Something went wrong. Please try again later.",
       });
     }
   }
