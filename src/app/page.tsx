@@ -49,11 +49,11 @@ const UserIllustration = () => (
 
 export default function Home() {
   return (
-    <main className="min-h-screen w-full lg:grid lg:grid-cols-2">
-      <div className="relative order-2 flex items-center justify-center bg-muted/20 p-10 lg:order-1">
+    <main className="min-h-screen w-full grid grid-cols-1 lg:grid-cols-2">
+      <div className="relative flex items-center justify-center bg-muted/20 p-10">
         <UserIllustration />
       </div>
-      <div className="order-1 flex items-center justify-center p-6 sm:p-12 lg:order-2">
+      <div className="flex items-center justify-center p-6 sm:p-12">
         <LoginForm />
       </div>
     </main>
