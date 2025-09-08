@@ -36,6 +36,7 @@ import { cn } from "@/lib/utils";
 import { Calendar as CalendarIcon, LogOut } from "lucide-react";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
 
 const stores = [
   { id: "12", name: "Combai" },
@@ -66,15 +67,97 @@ const stores = [
   { id: "48", name: "FRINEDS SATUUR" },
 ];
 
+interface Expense {
+  storeName: string;
+  date: string;
+  amount: number;
+}
+
 export default function DashboardPage() {
   const [fromDate, setFromDate] = React.useState<Date | undefined>();
   const [toDate, setToDate] = React.useState<Date | undefined>();
+  const [selectedStore, setSelectedStore] = React.useState<string>("");
+  const [expenses, setExpenses] = React.useState<Expense[]>([]);
+  const [totalAmount, setTotalAmount] = React.useState<number>(0);
   const router = useRouter();
+  const { toast } = useToast();
 
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     router.push("/");
   };
+  
+  const handleGetExpenses = async () => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      toast({
+        variant: "destructive",
+        title: "Authentication Error",
+        description: "You are not logged in.",
+      });
+      router.push("/");
+      return;
+    }
+
+    if (!selectedStore || !fromDate || !toDate) {
+      toast({
+        variant: "destructive",
+        title: "Missing Information",
+        description: "Please select a store and both from and to dates.",
+      });
+      return;
+    }
+    
+    try {
+      const queryParams = new URLSearchParams({
+        club: selectedStore,
+        from: format(fromDate, "yyyy-MM-dd"),
+        to: format(toDate, "yyyy-MM-dd"),
+      });
+
+      const response = await fetch(`https://tnfl2-cb6ea45c64b3.herokuapp.com/services/expenses/get?${queryParams.toString()}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const expensesData = data.expenses || [];
+        setExpenses(expensesData);
+        
+        const total = expensesData.reduce((acc: number, expense: Expense) => acc + expense.amount, 0);
+        setTotalAmount(total);
+
+        if (expensesData.length === 0) {
+          toast({
+            title: "No Expenses Found",
+            description: "No expenses were found for the selected criteria.",
+          });
+        }
+      } else {
+        const errorData = await response.json();
+        toast({
+          variant: "destructive",
+          title: "Failed to Fetch Expenses",
+          description: errorData.message || "An error occurred while fetching data.",
+        });
+        setExpenses([]);
+        setTotalAmount(0);
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "An Error Occurred",
+        description: "Something went wrong. Please try again later.",
+      });
+      setExpenses([]);
+      setTotalAmount(0);
+    }
+  };
+
 
   return (
     <div className="flex h-screen w-full flex-col">
@@ -93,13 +176,13 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 items-end gap-4 md:grid-cols-2 lg:grid-cols-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Store</label>
-                <Select>
+                <Select value={selectedStore} onValueChange={setSelectedStore}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a store" />
                   </SelectTrigger>
                   <SelectContent>
                     {stores.map((store) => (
-                      <SelectItem key={store.id} value={store.name}>
+                      <SelectItem key={store.id} value={store.id}>
                         {store.name}
                       </SelectItem>
                     ))}
@@ -164,7 +247,7 @@ export default function DashboardPage() {
                   </PopoverContent>
                 </Popover>
               </div>
-              <Button>Get Expenses</Button>
+              <Button onClick={handleGetExpenses}>Get Expenses</Button>
             </div>
           </CardContent>
         </Card>
@@ -184,12 +267,18 @@ export default function DashboardPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {/* Add table rows here */}
+                {expenses.map((expense, index) => (
+                  <TableRow key={index}>
+                    <TableCell>{expense.storeName}</TableCell>
+                    <TableCell>{format(new Date(expense.date), 'PPP')}</TableCell>
+                    <TableCell className="text-right">₹ {expense.amount.toFixed(2)}</TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
               <TableFooter>
                 <TableRow>
                   <TableCell colSpan={2} className="text-lg font-semibold">Total Amount</TableCell>
-                  <TableCell className="text-right text-lg font-semibold">₹ 0.00</TableCell>
+                  <TableCell className="text-right text-lg font-semibold">₹ {totalAmount.toFixed(2)}</TableCell>
                 </TableRow>
               </TableFooter>
             </Table>
