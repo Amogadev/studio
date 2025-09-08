@@ -83,6 +83,21 @@ export default function DashboardPage() {
           <CardContent className="pt-6">
             <div className="grid grid-cols-1 items-end gap-4 md:grid-cols-2 lg:grid-cols-4">
               <div className="space-y-2">
+                <label className="text-sm font-medium">Store</label>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a store" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {stores.map((store) => (
+                      <SelectItem key={store.id} value={store.name}>
+                        {store.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
                 <label className="text-sm font-medium">From Date</label>
                 <Popover>
                   <PopoverTrigger asChild>
@@ -139,21 +154,6 @@ export default function DashboardPage() {
                     />
                   </PopoverContent>
                 </Popover>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Store</label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a store" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {stores.map((store) => (
-                      <SelectItem key={store.id} value={store.name}>
-                        {store.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
               </div>
               <Button>Get Details</Button>
             </div>
