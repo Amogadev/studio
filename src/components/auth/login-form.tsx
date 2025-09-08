@@ -55,9 +55,6 @@ export function LoginForm() {
     <Card className="mx-auto w-full max-w-sm shadow-xl">
       <CardHeader className="text-center">
         <CardTitle className="text-2xl font-headline">SIGN IN</CardTitle>
-        <CardDescription>
-          Enter your email below to login to your account
-        </CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
