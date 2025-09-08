@@ -117,16 +117,16 @@ export function LoginForm() {
                 </FormItem>
               )}
             />
-            <div className="flex items-end justify-between mt-2">
-               <Button type="submit">
-                Sign In
-              </Button>
+            <div className="flex items-center justify-between mt-2">
               <div className="text-sm">
-                Don&apos;t have an account ?{' '}
+                Don&apos;t have an account?{' '}
                 <Link href="#" className="text-primary underline-offset-4 hover:underline">
                   Get Started
                 </Link>
               </div>
+               <Button type="submit">
+                Sign In
+              </Button>
             </div>
           </form>
         </Form>
