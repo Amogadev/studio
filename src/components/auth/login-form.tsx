@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
-  Card,
   CardContent,
   CardDescription,
   CardHeader,
@@ -90,7 +89,7 @@ export function LoginForm() {
           </CardTitle>
         </CardHeader>
         <CardContent className="px-0">
-          <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 grid gap-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
             <CardDescription className="text-lg">SIGN IN</CardDescription>
             <FormField
               control={form.control}
