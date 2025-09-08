@@ -171,7 +171,7 @@ export default function DashboardPage() {
         
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>All expense List</CardTitle>
+            <CardTitle>Expense Detail</CardTitle>
             <Button>Add Account</Button>
           </CardHeader>
           <CardContent>
