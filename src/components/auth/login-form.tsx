@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -34,6 +35,7 @@ const formSchema = z.object({
 
 export function LoginForm() {
   const { toast } = useToast();
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -43,11 +45,19 @@ export function LoginForm() {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    toast({
-      title: "Login Submitted",
-      description: "Check the console for form values.",
-    });
+    if (values.email === "demo@example.com" && values.password === "demo") {
+      toast({
+        title: "Login Successful",
+        description: "Redirecting to your dashboard.",
+      });
+      router.push("/dashboard");
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Invalid Credentials",
+        description: "Please check your email and password.",
+      });
+    }
   }
 
   return (
