@@ -19,19 +19,15 @@ import { Input } from "@/components/ui/input";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Mail, Lock } from "lucide-react";
 
 const formSchema = z.object({
-  email: z.string().min(1, {
-    message: "Email is required.",
-  }),
-  password: z.string().min(1, {
-    message: "Password is required.",
-  }),
+  email: z.string().email({ message: "Please enter a valid email." }),
+  password: z.string().min(1, { message: "Password is required." }),
 });
 
 export function LoginForm() {
@@ -79,24 +75,22 @@ export function LoginForm() {
   }
 
   return (
-    <Card className="mx-auto w-full max-w-sm shadow-xl">
-      <CardHeader className="text-center">
-        <CardTitle className="text-2xl font-headline">SIGN IN</CardTitle>
+    <div className="w-full max-w-sm">
+      <CardHeader className="px-0 pt-0 text-left">
+        <CardTitle className="text-3xl font-bold">Sign In</CardTitle>
+        <CardDescription>Unlock you world.</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-0">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 grid gap-6">
             <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center">
-                    <Mail className="mr-2 h-4 w-4" />
-                    Email
-                  </FormLabel>
+                  <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input placeholder="Enter your email" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -107,31 +101,29 @@ export function LoginForm() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center">
-                    <Lock className="mr-2 h-4 w-4" />
-                    Password
-                  </FormLabel>
+                  <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input type="password" {...field} />
+                    <Input
+                      type="password"
+                      placeholder="Enter your password"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <div className="flex items-center justify-between mt-2">
-              <div className="text-sm">
-                Don&apos;t have an account?{' '}
-                <Link href="#" className="text-primary underline-offset-4 hover:underline">
-                  Get Started
-                </Link>
-              </div>
-               <Button type="submit">
+            <div className="flex flex-col gap-4">
+              <Button type="submit" className="w-full">
                 Sign In
+              </Button>
+              <Button variant="outline" className="w-full" asChild>
+                <Link href="#">Create an account</Link>
               </Button>
             </div>
           </form>
         </Form>
       </CardContent>
-    </Card>
+    </div>
   );
 }
