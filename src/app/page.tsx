@@ -1,59 +1,30 @@
 import Image from "next/image";
 import { LoginForm } from "@/components/auth/login-form";
 
-const UserIllustration = () => (
-  <svg
-    className="h-48 w-48 rounded-full bg-primary/10 p-4 text-primary"
-    viewBox="0 0 100 100"
-    xmlns="http://www.w3.org/2000/svg"
-    fill="currentColor"
-  >
-    <defs>
-      <clipPath id="circle-clip">
-        <circle cx="50" cy="50" r="50" />
-      </clipPath>
-    </defs>
-    <g clipPath="url(#circle-clip)">
-      <circle cx="50" cy="50" r="50" fill="white" />
-      <g transform="translate(0, 5)">
-        <circle cx="50" cy="35" r="12" fill="#FFDDC1" />
-        <path
-          d="M38,47 C38,55 42,58 50,58 C58,58 62,55 62,47 L38,47 Z"
-          fill="#FFDDC1"
-        />
-        <path
-          d="M30 95 L70 95 L70 85 C70 80 65 75 60 75 L40 75 C35 75 30 80 30 85 Z"
-          fill="#4A5568"
-        />
-        <rect x="25" y="60" width="50" height="20" rx="5" fill="#E2E8F0" />
-        <rect x="45" y="65" width="10" height="10" fill="#CBD5E0" />
-
-        <path
-          d="M 50 23 C 40 23, 35 30, 35 38 L 65 38 C 65 30, 60 23, 50 23 Z"
-          fill="#2D3748"
-        />
-        <path
-          d="M48,60 l-10,-10 a5,5 0 0,1 0,-7 l5,-5 L 48,60"
-          fill="#4A5568"
-        />
-        <path
-          d="M52,60 l10,-10 a5,5 0 0,0 0,-7 l-5,-5 L 52,60"
-          fill="#4A5568"
-        />
-        <rect x="48" y="47" width="4" height="4" rx="1" fill="#E53E3E" />
-      </g>
-    </g>
-  </svg>
-);
+const LoginIllustration = () => (
+    <svg
+      className="h-48 w-48 text-primary"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+      <polyline points="10 17 15 12 10 7" />
+      <line x1="15" y1="12" x2="3" y2="12" />
+    </svg>
+  );
 
 
 export default function Home() {
   return (
-    <main className="min-h-screen w-full grid grid-cols-2">
+    <main className="min-h-screen w-full grid grid-cols-1 md:grid-cols-2">
       <div className="relative hidden md:flex items-center justify-center bg-muted/20 p-10">
-        <UserIllustration />
+        <LoginIllustration />
       </div>
-      <div className="col-span-2 md:col-span-1 flex items-center justify-center p-6 sm:p-12">
+      <div className="col-span-1 flex items-center justify-center p-6 sm:p-12">
         <LoginForm />
       </div>
     </main>
