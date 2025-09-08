@@ -117,7 +117,7 @@ export function LoginForm() {
                 </FormItem>
               )}
             />
-            <div className="flex items-center justify-between mt-2">
+            <div className="flex items-end justify-between mt-2">
                <Button type="submit">
                 Sign In
               </Button>
