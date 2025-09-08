@@ -25,7 +25,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Mail, Lock } from "lucide-react";
 
 const formSchema = z.object({
-  email: z.string().email({
+  email: z.string().min(1, {
     message: "Please enter a valid email address.",
   }),
   password: z.string().min(1, {
@@ -46,12 +46,17 @@ export function LoginForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
+      const payload = {
+        email: "demo",
+        password: "demo"
+      };
+
       const response = await fetch('https://tnfl2-cb6ea45c64b3.herokuapp.com/services/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
