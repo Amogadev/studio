@@ -8,7 +8,7 @@ export default function Home() {
       <Card className="grid w-full max-w-4xl grid-cols-1 overflow-hidden shadow-2xl md:grid-cols-2">
         <div className="relative flex items-center justify-center bg-muted/20 p-8">
           <Image
-            src="https://picsum.photos/600/600"
+            src="/loggg_in.png"
             alt="Person working on a laptop"
             width={400}
             height={400}
