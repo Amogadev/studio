@@ -62,10 +62,13 @@ export function LoginForm() {
         router.push("/dashboard");
       } else {
         const errorData = await response.json();
+        const description = typeof errorData === 'object' && errorData.message 
+          ? errorData.message 
+          : "Please check your credentials and try again.";
         toast({
           variant: "destructive",
           title: "Login Failed",
-          description: errorData.message || "Please check your credentials and try again.",
+          description,
         });
       }
     } catch (error) {
@@ -79,14 +82,14 @@ export function LoginForm() {
 
   return (
     <div className="w-full max-w-sm">
-      <CardHeader className="px-0 pt-4">
-        <CardTitle className="flex items-center gap-2 text-3xl font-bold">
-          <Shield className="h-8 w-8" />
-          ADMIN
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="px-0">
-        <Form {...form}>
+      <Form {...form}>
+        <CardHeader className="px-0 pt-4">
+          <CardTitle className="flex items-center gap-2 text-3xl font-bold">
+            <Shield className="h-8 w-8" />
+            ADMIN
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="px-0">
           <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 grid gap-6">
             <CardDescription className="text-lg">SIGN IN</CardDescription>
             <FormField
@@ -141,8 +144,8 @@ export function LoginForm() {
               </Button>
             </div>
           </form>
-        </Form>
-      </CardContent>
+        </CardContent>
+      </Form>
     </div>
   );
 }
