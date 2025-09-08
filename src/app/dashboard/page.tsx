@@ -27,6 +27,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -170,10 +171,7 @@ export default function DashboardPage() {
         
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <div>
-              <CardTitle>All expense List</CardTitle>
-              <CardDescription>Total Amount: ₹ 0.00</CardDescription>
-            </div>
+            <CardTitle>All expense List</CardTitle>
             <Button>Add Account</Button>
           </CardHeader>
           <CardContent>
@@ -182,12 +180,18 @@ export default function DashboardPage() {
                 <TableRow>
                   <TableHead>Store Name</TableHead>
                   <TableHead>Date</TableHead>
-                  <TableHead>Amount</TableHead>
+                  <TableHead className="text-right">Amount</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {/* Add table rows here */}
               </TableBody>
+              <TableFooter>
+                <TableRow>
+                  <TableCell colSpan={2} className="text-lg font-semibold">Total Amount</TableCell>
+                  <TableCell className="text-right text-lg font-semibold">₹ 0.00</TableCell>
+                </TableRow>
+              </TableFooter>
             </Table>
           </CardContent>
         </Card>
