@@ -80,7 +80,7 @@ export default function DashboardPage() {
       <header className="flex h-16 items-center justify-between border-b bg-background px-4 md:px-6">
         <h1 className="text-xl font-semibold">WELCOME</h1>
         <div className="flex items-center gap-4">
-          <Button>Add New</Button>
+          <Button>Add New Expense</Button>
           <Button variant="ghost" onClick={handleLogout}>
             <LogOut className="mr-2" /> Logout
           </Button>
