@@ -63,10 +63,20 @@ const initialStores = [
   { id: "48", name: "FRINEDS SATUUR" },
 ];
 
+interface SaleId {
+  date: number;
+  machineIdentifier: number;
+  processIdentifier: number;
+  counter: number;
+  timestamp: number;
+  time: number;
+  timeSecond: number;
+}
+
 interface Sale {
   invoiceNumber: string;
   timeCreatedAt: number;
-  _id: string | { [key: string]: any };
+  _id: SaleId;
 }
 
 interface Store {
@@ -291,21 +301,25 @@ export default function DashboardPage() {
                 <TableRow>
                   <TableHead>Date</TableHead>
                   <TableHead>Purchase Detail</TableHead>
-                  <TableHead>ID</TableHead>
+                  <TableHead>ID Date</TableHead>
+                  <TableHead>Machine ID</TableHead>
+                  <TableHead>Counter</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {sales.length > 0 ? (
                   sales.map((sale, index) => (
-                    <TableRow key={`${sale._id}-${index}`}>
+                    <TableRow key={`${typeof sale._id === 'object' ? sale._id.timestamp : sale._id}-${index}`}>
                       <TableCell>{format(new Date(sale.timeCreatedAt * 1000), 'dd/MM/yyyy')}</TableCell>
                       <TableCell>{sale.invoiceNumber}</TableCell>
-                      <TableCell>{typeof sale._id === 'object' ? JSON.stringify(sale._id) : sale._id}</TableCell>
+                      <TableCell>{sale._id.date ? format(new Date(sale._id.date), 'dd/MM/yyyy HH:mm:ss') : 'N/A'}</TableCell>
+                      <TableCell>{sale._id.machineIdentifier}</TableCell>
+                      <TableCell>{sale._id.counter}</TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={3} className="text-center">No sales to display.</TableCell>
+                    <TableCell colSpan={5} className="text-center">No sales to display.</TableCell>
                   </TableRow>
                 )}
               </TableBody>
