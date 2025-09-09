@@ -175,7 +175,7 @@ export default function DashboardPage() {
               });
               if(detailResponse.ok) {
                 const detailData = await detailResponse.json();
-                return detailData.data; 
+                return { ...sale, ...detailData.data };
               }
               return null;
             });
@@ -317,8 +317,7 @@ export default function DashboardPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Date</TableHead>
-                  <TableHead>Purchase Detail</TableHead>
-                  <TableHead>ID Time</TableHead>
+                  <TableHead>Time</TableHead>
                   <TableHead>Invoice Number</TableHead>
                   <TableHead>Purchase Stock</TableHead>
                   <TableHead>Total Purchase Stock</TableHead>
@@ -329,8 +328,7 @@ export default function DashboardPage() {
                   sales.map((sale, index) => (
                     <TableRow key={`${typeof sale._id === 'object' && sale._id !== null ? sale._id.timestamp : sale._id}-${index}`}>
                       <TableCell>{format(new Date(sale.timeCreatedAt * 1000), 'dd/MM/yyyy')}</TableCell>
-                      <TableCell>{sale.invoiceNumber}</TableCell>
-                      <TableCell>{sale._id.timestamp ? format(new Date(sale._id.timestamp * 1000), 'HH:mm:ss') : 'N/A'}</TableCell>
+                      <TableCell>{format(new Date(sale.timeCreatedAt * 1000), 'HH:mm:ss')}</TableCell>
                       <TableCell>{sale.invoiceNumber}</TableCell>
                       <TableCell>{(typeof sale.purchaseStock === 'number' && !isNaN(sale.purchaseStock)) ? sale.purchaseStock.toFixed(2) : '0.00'}</TableCell>
                       <TableCell>{sale.runningTotal?.toFixed(2)}</TableCell>
@@ -338,13 +336,13 @@ export default function DashboardPage() {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center">No sales to display.</TableCell>
+                    <TableCell colSpan={5} className="text-center">No sales to display.</TableCell>
                   </TableRow>
                 )}
               </TableBody>
               <TableFooter>
                 <TableRow>
-                  <TableCell colSpan={5} className="text-right font-bold">Total Purchase Stock</TableCell>
+                  <TableCell colSpan={4} className="text-right font-bold">Total Purchase Stock</TableCell>
                   <TableCell className="font-bold">{totalPurchaseStock.toFixed(2)}</TableCell>
                 </TableRow>
               </TableFooter>
