@@ -319,7 +319,6 @@ export default function DashboardPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Date</TableHead>
-                  <TableHead>Invoice Number</TableHead>
                   <TableHead>Purchase Stock</TableHead>
                 </TableRow>
               </TableHeader>
@@ -328,19 +327,18 @@ export default function DashboardPage() {
                   sales.map((sale, index) => (
                     <TableRow key={`${typeof sale._id === 'object' && sale._id !== null ? sale._id.timestamp : sale._id}-${index}`}>
                       <TableCell>{format(new Date(sale.timeCreatedAt * 1000), 'dd/MM/yyyy')}</TableCell>
-                      <TableCell>{sale.invoiceNumber}</TableCell>
                       <TableCell>{(typeof sale.purchaseStock === 'number' && !isNaN(sale.purchaseStock)) ? sale.purchaseStock.toFixed(2) : '0.00'}</TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={3} className="text-center">No sales to display.</TableCell>
+                    <TableCell colSpan={2} className="text-center">No sales to display.</TableCell>
                   </TableRow>
                 )}
               </TableBody>
               <TableFooter>
                 <TableRow>
-                  <TableCell colSpan={2} className="text-right font-bold">Total Purchase Stock</TableCell>
+                  <TableCell colSpan={1} className="text-right font-bold">Total Purchase Stock</TableCell>
                   <TableCell className="font-bold">{totalPurchaseStock.toFixed(2)}</TableCell>
                 </TableRow>
               </TableFooter>
@@ -351,5 +349,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    
