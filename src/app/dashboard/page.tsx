@@ -395,8 +395,7 @@ export default function DashboardPage() {
         </Card>
         
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>Expense Detail</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-end">
             <Button onClick={() => setAddAccountOpen(true)}>Add Account</Button>
           </CardHeader>
           <CardContent>
