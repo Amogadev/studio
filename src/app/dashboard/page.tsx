@@ -477,7 +477,7 @@ export default function DashboardPage() {
                   </PopoverContent>
                 </Popover>
               </div>
-              <Button onClick={handleGetData}>Get {activeTab === 'expenses' ? 'Expenses' : 'Sales'}</Button>
+              <Button onClick={handleGetData}>Get Report</Button>
             </div>
           </CardContent>
         </Card>
@@ -679,5 +679,7 @@ export default function DashboardPage() {
       </Dialog>
     </div>
   );
+
+    
 
     
