@@ -297,8 +297,8 @@ export default function DashboardPage() {
               </TableHeader>
               <TableBody>
                 {sales.length > 0 ? (
-                  sales.map((sale) => (
-                    <TableRow key={sale._id}>
+                  sales.map((sale, index) => (
+                    <TableRow key={`${sale._id}-${index}`}>
                       <TableCell>{format(new Date(sale.timeCreatedAt * 1000), 'dd/MM/yyyy')}</TableCell>
                       <TableCell>{sale.invoiceNumber}</TableCell>
                       <TableCell>{sale._id}</TableCell>
@@ -317,5 +317,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    
