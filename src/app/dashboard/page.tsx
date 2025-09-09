@@ -78,7 +78,7 @@ interface Sale {
   invoiceNumber: string;
   timeCreatedAt: number;
   _id: SaleId;
-  purchaseStock: number;
+  purchaseStock?: number;
   runningTotal?: number;
 }
 
@@ -182,7 +182,7 @@ export default function DashboardPage() {
             
             let runningTotal = 0;
             const salesWithRunningTotal = detailedSales.map(sale => {
-              const purchaseStock = sale.purchaseStock || 0;
+              const purchaseStock = (typeof sale.purchaseStock === 'number' && !isNaN(sale.purchaseStock)) ? sale.purchaseStock : 0;
               runningTotal += purchaseStock;
               return { ...sale, purchaseStock, runningTotal };
             });
@@ -209,7 +209,8 @@ export default function DashboardPage() {
     }
   };
 
-  const totalPurchaseStock = sales.reduce((total, sale) => total + (sale.purchaseStock || 0), 0);
+  const totalPurchaseStock = sales.reduce((total, sale) => total + ((typeof sale.purchaseStock === 'number' && !isNaN(sale.purchaseStock)) ? sale.purchaseStock : 0), 0);
+
 
   if (!isAuthenticated) {
     return null; // or a loading spinner
@@ -328,7 +329,7 @@ export default function DashboardPage() {
                       <TableCell>{sale.invoiceNumber}</TableCell>
                       <TableCell>{sale._id.timestamp ? format(new Date(sale._id.timestamp * 1000), 'HH:mm:ss') : 'N/A'}</TableCell>
                       <TableCell>{sale.invoiceNumber}</TableCell>
-                      <TableCell>{sale.purchaseStock}</TableCell>
+                      <TableCell>{(typeof sale.purchaseStock === 'number' && !isNaN(sale.purchaseStock)) ? sale.purchaseStock.toFixed(2) : '0.00'}</TableCell>
                       <TableCell>{sale.runningTotal?.toFixed(2)}</TableCell>
                     </TableRow>
                   ))
