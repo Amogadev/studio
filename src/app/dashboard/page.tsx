@@ -302,8 +302,6 @@ export default function DashboardPage() {
                   <TableHead>Date</TableHead>
                   <TableHead>Purchase Detail</TableHead>
                   <TableHead>ID Time</TableHead>
-                  <TableHead>Machine ID</TableHead>
-                  <TableHead>Counter</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -313,13 +311,11 @@ export default function DashboardPage() {
                       <TableCell>{format(new Date(sale.timeCreatedAt * 1000), 'dd/MM/yyyy')}</TableCell>
                       <TableCell>{sale.invoiceNumber}</TableCell>
                       <TableCell>{sale._id.timestamp ? format(new Date(sale._id.timestamp * 1000), 'HH:mm:ss') : 'N/A'}</TableCell>
-                      <TableCell>{sale._id.machineIdentifier}</TableCell>
-                      <TableCell>{sale._id.counter}</TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center">No sales to display.</TableCell>
+                    <TableCell colSpan={3} className="text-center">No sales to display.</TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -330,5 +326,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    
