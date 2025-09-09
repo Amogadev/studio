@@ -6,8 +6,6 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import {
   Select,
@@ -26,7 +24,6 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -36,8 +33,6 @@ import { Calendar as CalendarIcon, LogOut } from "lucide-react";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
 
 const initialStores = [
   { id: "12", name: "Combai" },
@@ -68,12 +63,6 @@ const initialStores = [
   { id: "48", name: "FRINEDS SATUUR" },
 ];
 
-interface Expense {
-  storeName: string;
-  date: string;
-  amount: number;
-}
-
 interface Sale {
   invoiceNumber: string;
   timeCreatedAt: number;
@@ -89,15 +78,12 @@ export default function DashboardPage() {
   const [fromDate, setFromDate] = React.useState<Date | undefined>();
   const [toDate, setToDate] = React.useState<Date | undefined>();
   const [selectedStore, setSelectedStore] = React.useState<string>("");
-  const [expenses, setExpenses] = React.useState<Expense[]>([]);
-  const [totalAmount, setTotalAmount] = React.useState<number>(0);
   const [sales, setSales] = React.useState<Sale[]>([]);
   const router = useRouter();
   const { toast } = useToast();
 
   const [stores, setStores] = React.useState<Store[]>(initialStores);
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
-  const [activeTab, setActiveTab] = React.useState("expenses");
 
 
   React.useEffect(() => {
@@ -112,77 +98,6 @@ export default function DashboardPage() {
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     router.push("/");
-  };
-  
-  const handleGetExpenses = async () => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-      toast({
-        variant: "destructive",
-        title: "Authentication Error",
-        description: "You are not logged in.",
-      });
-      router.push("/");
-      return;
-    }
-
-    if (!selectedStore || !fromDate || !toDate) {
-      toast({
-        variant: "destructive",
-        title: "Missing Information",
-        description: "Please select a store and both from and to dates.",
-      });
-      return;
-    }
-    
-    try {
-      const queryParams = new URLSearchParams({
-        club: selectedStore,
-        from: format(fromDate, "yyyy-MM-dd"),
-        to: format(toDate, "yyyy-MM-dd"),
-      });
-
-      const response = await fetch(`https://tnfl2-cb6ea45c64b3.herokuapp.com/admin/expenses/get?${queryParams.toString()}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        const expensesData = (data.data || []).map((e: any) => ({...e, storeName: stores.find(s => s.id === selectedStore)?.name || ''}));
-        setExpenses(expensesData);
-        
-        const total = expensesData.reduce((acc: number, expense: Expense) => acc + expense.amount, 0);
-        setTotalAmount(total);
-
-        if (expensesData.length === 0) {
-          toast({
-            title: "No Expenses Found",
-            description: "No expenses were found for the selected criteria.",
-          });
-        }
-      } else {
-        const errorData = await response.json();
-        toast({
-          variant: "destructive",
-          title: "Failed to Fetch Expenses",
-          description: errorData.message || "An error occurred while fetching data.",
-        });
-        setExpenses([]);
-        setTotalAmount(0);
-      }
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "An Error Occurred",
-        description: "Something went wrong. Please try again later.",
-      });
-      setExpenses([]);
-      setTotalAmount(0);
-    }
   };
 
   const handleGetSales = async () => {
@@ -251,14 +166,6 @@ export default function DashboardPage() {
         description: "Something went wrong. Please try again later.",
       });
       setSales([]);
-    }
-  };
-  
-  const handleGetData = () => {
-    if (activeTab === 'expenses') {
-      handleGetExpenses();
-    } else {
-      handleGetSales();
     }
   };
 
@@ -353,84 +260,38 @@ export default function DashboardPage() {
                   </PopoverContent>
                 </Popover>
               </div>
-              <Button onClick={handleGetData}>Get Report</Button>
+              <Button onClick={handleGetSales}>Get Report</Button>
             </div>
           </CardContent>
         </Card>
         
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="expenses">Expenses</TabsTrigger>
-            <TabsTrigger value="sales">Sales</TabsTrigger>
-          </TabsList>
-          <TabsContent value="expenses">
-            <Card>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Store Name</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead className="text-right">Amount</TableHead>
+        <Card>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Invoice Number</TableHead>
+                  <TableHead>Date</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {sales.length > 0 ? (
+                  sales.map((sale) => (
+                    <TableRow key={sale._id}>
+                      <TableCell>{sale.invoiceNumber}</TableCell>
+                      <TableCell>{format(new Date(sale.timeCreatedAt * 1000), 'dd/MM/yyyy')}</TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {expenses.length > 0 ? (
-                      expenses.map((expense, index) => (
-                        <TableRow key={index}>
-                          <TableCell>{expense.storeName}</TableCell>
-                          <TableCell>{expense.date}</TableCell>
-                          <TableCell className="text-right">₹ {expense.amount.toFixed(2)}</TableCell>
-                        </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={3} className="text-center">No expenses to display.</TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                  <TableFooter>
-                    <TableRow>
-                      <TableCell colSpan={2} className="text-lg font-semibold">Total Amount</TableCell>
-                      <TableCell className="text-right text-lg font-semibold">₹ {totalAmount.toFixed(2)}</TableCell>
-                    </TableRow>
-                  </TableFooter>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          <TabsContent value="sales">
-            <Card>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Invoice Number</TableHead>
-                      <TableHead>Date</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {sales.length > 0 ? (
-                      sales.map((sale) => (
-                        <TableRow key={sale._id}>
-                          <TableCell>{sale.invoiceNumber}</TableCell>
-                          <TableCell>{format(new Date(sale.timeCreatedAt * 1000), 'dd/MM/yyyy')}</TableCell>
-                        </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={2} className="text-center">No sales to display.</TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={2} className="text-center">No sales to display.</TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
       </main>
     </div>
   );
 }
-
-    
