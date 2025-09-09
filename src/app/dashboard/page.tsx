@@ -36,16 +36,6 @@ import { Calendar as CalendarIcon, LogOut } from "lucide-react";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-  DialogClose,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 
@@ -105,9 +95,6 @@ export default function DashboardPage() {
   const router = useRouter();
   const { toast } = useToast();
 
-  const [isAddAccountOpen, setAddAccountOpen] = React.useState(false);
-  const [newAccountId, setNewAccountId] = React.useState("");
-  const [newAccountName, setNewAccountName] = React.useState("");
   const [stores, setStores] = React.useState<Store[]>(initialStores);
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
   const [activeTab, setActiveTab] = React.useState("expenses");
@@ -275,45 +262,6 @@ export default function DashboardPage() {
     }
   };
 
-  const handleAddAccount = async () => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-      toast({
-        variant: "destructive",
-        title: "Authentication Error",
-        description: "You are not logged in.",
-      });
-      router.push("/");
-      return;
-    }
-    
-    if (!newAccountId || !newAccountName) {
-      toast({
-        variant: "destructive",
-        title: "Missing Information",
-        description: "Please provide both an ID and a name for the new account.",
-      });
-      return;
-    }
-
-    // In a real app, you would make an API call here to save the new account.
-    // For now, we'll just add it to the local state.
-    const newStore: Store = {
-      id: newAccountId,
-      name: newAccountName,
-    };
-    setStores([...stores, newStore].sort((a, b) => a.name.localeCompare(b.name)));
-    
-    toast({
-      title: "Account Added",
-      description: `The account "${newAccountName}" has been added.`,
-    });
-    
-    setAddAccountOpen(false);
-    setNewAccountId("");
-    setNewAccountName("");
-  };
-
   if (!isAuthenticated) {
     return null; // or a loading spinner
   }
@@ -417,9 +365,6 @@ export default function DashboardPage() {
           </TabsList>
           <TabsContent value="expenses">
             <Card>
-              <CardHeader className="flex flex-row items-center justify-end">
-                 <Button onClick={() => setAddAccountOpen(true)}>Add Account</Button>
-              </CardHeader>
               <CardContent>
                 <Table>
                   <TableHeader>
@@ -484,49 +429,6 @@ export default function DashboardPage() {
           </TabsContent>
         </Tabs>
       </main>
-
-      <Dialog open={isAddAccountOpen} onOpenChange={setAddAccountOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Add New Account</DialogTitle>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="accountId" className="text-right">
-                Account ID
-              </Label>
-              <Input
-                id="accountId"
-                value={newAccountId}
-                onChange={(e) => setNewAccountId(e.target.value)}
-                className="col-span-3"
-                placeholder="Enter account ID"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="accountName" className="text-right">
-                Account Name
-              </Label>
-              <Input
-                id="accountName"
-                value={newAccountName}
-                onChange={(e) => setNewAccountName(e.target.value)}
-                className="col-span-3"
-                placeholder="Enter account name"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DialogClose>
-            <Button onClick={handleAddAccount}>Add Account</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
-
-    
-
-    
+}
