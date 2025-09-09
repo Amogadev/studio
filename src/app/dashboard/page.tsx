@@ -46,6 +46,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 
 const initialStores = [
   { id: "12", name: "Combai" },
@@ -82,6 +84,18 @@ interface Expense {
   amount: number;
 }
 
+interface Sale {
+  transactionId: string;
+  timestamp: string;
+  totalAmount: number;
+  items: {
+    sku: string;
+    name: string;
+    quantity: number;
+    price: number;
+  }[];
+}
+
 interface Store {
   id: string;
   name: string;
@@ -93,6 +107,9 @@ export default function DashboardPage() {
   const [selectedStore, setSelectedStore] = React.useState<string>("");
   const [expenses, setExpenses] = React.useState<Expense[]>([]);
   const [totalAmount, setTotalAmount] = React.useState<number>(0);
+  const [sales, setSales] = React.useState<Sale[]>([]);
+  const [totalSalesAmount, setTotalSalesAmount] = React.useState<number>(0);
+  
   const router = useRouter();
   const { toast } = useToast();
 
@@ -106,6 +123,8 @@ export default function DashboardPage() {
   const [newAccountName, setNewAccountName] = React.useState("");
   const [stores, setStores] = React.useState<Store[]>(initialStores);
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+  const [activeTab, setActiveTab] = React.useState("expenses");
+
 
   React.useEffect(() => {
     const token = localStorage.getItem("accessToken");
@@ -191,7 +210,86 @@ export default function DashboardPage() {
       setTotalAmount(0);
     }
   };
+
+  const handleGetSales = async () => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      toast({
+        variant: "destructive",
+        title: "Authentication Error",
+        description: "You are not logged in.",
+      });
+      router.push("/");
+      return;
+    }
+
+    if (!selectedStore || !fromDate || !toDate) {
+      toast({
+        variant: "destructive",
+        title: "Missing Information",
+        description: "Please select a store and both from and to dates.",
+      });
+      return;
+    }
+    
+    try {
+      const queryParams = new URLSearchParams({
+        shopNumber: selectedStore,
+        fromTime: Math.floor(fromDate.getTime() / 1000).toString(),
+        toTime: Math.floor(toDate.getTime() / 1000).toString(),
+      });
+
+      const response = await fetch(`https://tnfl2-cb6ea45c64b3.herokuapp.com/services/admin/sales?${queryParams.toString()}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const salesData = data.sales || [];
+        setSales(salesData);
+        
+        const total = salesData.reduce((acc: number, sale: Sale) => acc + sale.totalAmount, 0);
+        setTotalSalesAmount(total);
+
+        if (salesData.length === 0) {
+          toast({
+            title: "No Sales Found",
+            description: "No sales were found for the selected criteria.",
+          });
+        }
+      } else {
+        const errorData = await response.json();
+        toast({
+          variant: "destructive",
+          title: "Failed to Fetch Sales",
+          description: errorData.message || "An error occurred while fetching data.",
+        });
+        setSales([]);
+        setTotalSalesAmount(0);
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "An Error Occurred",
+        description: "Something went wrong. Please try again later.",
+      });
+      setSales([]);
+      setTotalSalesAmount(0);
+    }
+  };
   
+  const handleGetData = () => {
+    if (activeTab === 'expenses') {
+      handleGetExpenses();
+    } else {
+      handleGetSales();
+    }
+  };
+
   const handleAddExpense = async () => {
     const token = localStorage.getItem("accessToken");
     if (!token) {
@@ -389,48 +487,100 @@ export default function DashboardPage() {
                   </PopoverContent>
                 </Popover>
               </div>
-              <Button onClick={handleGetExpenses}>Get Expenses</Button>
+              <Button onClick={handleGetData}>Get {activeTab === 'expenses' ? 'Expenses' : 'Sales'}</Button>
             </div>
           </CardContent>
         </Card>
         
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-end">
-            <Button onClick={() => setAddAccountOpen(true)}>Add Account</Button>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Store Name</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead className="text-right">Amount</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {expenses.length > 0 ? (
-                  expenses.map((expense, index) => (
-                    <TableRow key={index}>
-                      <TableCell>{expense.storeName}</TableCell>
-                      <TableCell>{format(new Date(expense.date), 'PPP')}</TableCell>
-                      <TableCell className="text-right">₹ {expense.amount.toFixed(2)}</TableCell>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="expenses">Expenses</TabsTrigger>
+            <TabsTrigger value="sales">Sales</TabsTrigger>
+          </TabsList>
+          <TabsContent value="expenses">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-end">
+                <Button onClick={() => setAddAccountOpen(true)}>Add Account</Button>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Store Name</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead className="text-right">Amount</TableHead>
                     </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={3} className="text-center">No expenses to display.</TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-              <TableFooter>
-                <TableRow>
-                  <TableCell colSpan={2} className="text-lg font-semibold">Total Amount</TableCell>
-                  <TableCell className="text-right text-lg font-semibold">₹ {totalAmount.toFixed(2)}</TableCell>
-                </TableRow>
-              </TableFooter>
-            </Table>
-          </CardContent>
-        </Card>
+                  </TableHeader>
+                  <TableBody>
+                    {expenses.length > 0 ? (
+                      expenses.map((expense, index) => (
+                        <TableRow key={index}>
+                          <TableCell>{expense.storeName}</TableCell>
+                          <TableCell>{format(new Date(expense.date), 'PPP')}</TableCell>
+                          <TableCell className="text-right">₹ {expense.amount.toFixed(2)}</TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={3} className="text-center">No expenses to display.</TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                  <TableFooter>
+                    <TableRow>
+                      <TableCell colSpan={2} className="text-lg font-semibold">Total Amount</TableCell>
+                      <TableCell className="text-right text-lg font-semibold">₹ {totalAmount.toFixed(2)}</TableCell>
+                    </TableRow>
+                  </TableFooter>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="sales">
+            <Card>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Transaction ID</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Items</TableHead>
+                      <TableHead className="text-right">Amount</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {sales.length > 0 ? (
+                      sales.map((sale) => (
+                        <TableRow key={sale.transactionId}>
+                          <TableCell>{sale.transactionId}</TableCell>
+                          <TableCell>{format(new Date(parseInt(sale.timestamp) * 1000), 'PPP p')}</TableCell>
+                          <TableCell>
+                            <ul className="list-disc pl-5">
+                              {sale.items.map((item, index) => (
+                                <li key={index}>{item.name} (x{item.quantity})</li>
+                              ))}
+                            </ul>
+                          </TableCell>
+                          <TableCell className="text-right">₹ {sale.totalAmount.toFixed(2)}</TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={4} className="text-center">No sales to display.</TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                  <TableFooter>
+                    <TableRow>
+                      <TableCell colSpan={3} className="text-lg font-semibold">Total Sales</TableCell>
+                      <TableCell className="text-right text-lg font-semibold">₹ {totalSalesAmount.toFixed(2)}</TableCell>
+                    </TableRow>
+                  </TableFooter>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </main>
 
       <Dialog open={isAddExpenseOpen} onOpenChange={setAddExpenseOpen}>
@@ -556,3 +706,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
