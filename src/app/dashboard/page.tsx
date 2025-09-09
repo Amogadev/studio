@@ -310,7 +310,7 @@ export default function DashboardPage() {
                 {sales.length > 0 ? (
                   sales.map((sale, index) => (
                     <TableRow key={`${typeof sale._id === 'object' ? sale._id.timestamp : sale._id}-${index}`}>
-                      <TableCell>{format(new Date(sale.timeCreatedAt * 1000), 'dd/MM/yyyy HH:mm:ss')}</TableCell>
+                      <TableCell>{format(new Date(sale.timeCreatedAt * 1000), 'dd/MM/yyyy')}</TableCell>
                       <TableCell>{sale.invoiceNumber}</TableCell>
                       <TableCell>{sale._id.timestamp ? format(new Date(sale._id.timestamp * 1000), 'HH:mm:ss') : 'N/A'}</TableCell>
                       <TableCell>{sale._id.machineIdentifier}</TableCell>
@@ -330,3 +330,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
