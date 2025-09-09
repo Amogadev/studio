@@ -411,7 +411,7 @@ export default function DashboardPage() {
                     <SelectValue placeholder="Select a store" />
                   </SelectTrigger>
                   <SelectContent>
-                    {stores.map((store) => (
+                    {stores.sort((a, b) => a.name.localeCompare(b.name)).map((store) => (
                       <SelectItem key={store.id} value={store.id}>
                         {store.name}
                       </SelectItem>
@@ -573,7 +573,7 @@ export default function DashboardPage() {
                     <SelectValue placeholder="Select a store" />
                   </SelectTrigger>
                   <SelectContent>
-                    {stores.map((store) => (
+                    {stores.sort((a, b) => a.name.localeCompare(b.name)).map((store) => (
                       <SelectItem key={store.id} value={store.id}>
                         {store.name}
                       </SelectItem>
@@ -680,5 +680,7 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
 
     
