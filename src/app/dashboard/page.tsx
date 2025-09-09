@@ -79,6 +79,8 @@ interface Sale {
   timeCreatedAt: number;
   _id: SaleId;
   purchaseStock?: number;
+  stock?: number;
+  quantity?: number;
   runningTotal?: number;
 }
 
@@ -182,7 +184,8 @@ export default function DashboardPage() {
             
             let runningTotal = 0;
             const salesWithRunningTotal = detailedSales.map(sale => {
-              const purchaseStock = (typeof sale.purchaseStock === 'number' && !isNaN(sale.purchaseStock)) ? sale.purchaseStock : 0;
+              const stockValue = sale.purchaseStock ?? sale.stock ?? sale.quantity ?? 0;
+              const purchaseStock = (typeof stockValue === 'number' && !isNaN(stockValue)) ? stockValue : 0;
               runningTotal += purchaseStock;
               return { ...sale, purchaseStock, runningTotal };
             });
@@ -324,7 +327,7 @@ export default function DashboardPage() {
               <TableBody>
                 {sales.length > 0 ? (
                   sales.map((sale, index) => (
-                    <TableRow key={`${typeof sale._id === 'object' ? sale._id.timestamp : sale._id}-${index}`}>
+                    <TableRow key={`${typeof sale._id === 'object' && sale._id !== null ? sale._id.timestamp : sale._id}-${index}`}>
                       <TableCell>{format(new Date(sale.timeCreatedAt * 1000), 'dd/MM/yyyy')}</TableCell>
                       <TableCell>{sale.invoiceNumber}</TableCell>
                       <TableCell>{sale._id.timestamp ? format(new Date(sale._id.timestamp * 1000), 'HH:mm:ss') : 'N/A'}</TableCell>
@@ -352,3 +355,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
