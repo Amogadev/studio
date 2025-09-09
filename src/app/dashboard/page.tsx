@@ -534,7 +534,6 @@ export default function DashboardPage() {
                     <TableRow>
                       <TableHead>Invoice Number</TableHead>
                       <TableHead>Date</TableHead>
-                      <TableHead>ID</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -542,13 +541,12 @@ export default function DashboardPage() {
                       sales.map((sale) => (
                         <TableRow key={sale._id}>
                           <TableCell>{sale.invoiceNumber}</TableCell>
-                          <TableCell>{format(new Date(sale.timeCreatedAt * 1000), 'yyyy-MM-dd')}</TableCell>
-                          <TableCell>{sale._id}</TableCell>
+                          <TableCell>{format(new Date(sale.timeCreatedAt * 1000), 'dd/MM/yyyy')}</TableCell>
                         </TableRow>
                       ))
                     ) : (
                       <TableRow>
-                        <TableCell colSpan={3} className="text-center">No sales to display.</TableCell>
+                        <TableCell colSpan={2} className="text-center">No sales to display.</TableCell>
                       </TableRow>
                     )}
                   </TableBody>
