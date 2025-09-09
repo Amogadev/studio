@@ -74,14 +74,16 @@ interface SaleId {
   timeSecond: number;
 }
 
+interface Product {
+  purchaseStock?: number;
+}
+
 interface Sale {
   invoiceNumber: string;
   timeCreatedAt: number;
   _id: SaleId;
   purchaseStock?: number;
-  stock?: number;
-  quantity?: number;
-  runningTotal?: number;
+  productList?: Product[];
 }
 
 interface Store {
@@ -182,15 +184,15 @@ export default function DashboardPage() {
 
             const detailedSales = (await Promise.all(detailedSalesPromises)).filter(Boolean) as Sale[];
             
-            let runningTotal = 0;
-            const salesWithRunningTotal = detailedSales.map(sale => {
-              const stockValue = sale.purchaseStock ?? sale.stock ?? sale.quantity ?? 0;
-              const purchaseStock = (typeof stockValue === 'number' && !isNaN(stockValue)) ? stockValue : 0;
-              runningTotal += purchaseStock;
-              return { ...sale, purchaseStock, runningTotal };
+            const salesWithTotalPurchaseStock = detailedSales.map(sale => {
+              const totalPurchaseStock = sale.productList?.reduce((sum, product) => {
+                const stock = (typeof product.purchaseStock === 'number' && !isNaN(product.purchaseStock)) ? product.purchaseStock : 0;
+                return sum + stock;
+              }, 0) ?? 0;
+              return { ...sale, purchaseStock: totalPurchaseStock };
             });
 
-            setSales(salesWithRunningTotal);
+            setSales(salesWithTotalPurchaseStock);
         }
 
       } else {
@@ -317,10 +319,8 @@ export default function DashboardPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Date</TableHead>
-                  <TableHead>Time</TableHead>
                   <TableHead>Invoice Number</TableHead>
                   <TableHead>Purchase Stock</TableHead>
-                  <TableHead>Total Purchase Stock</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -328,21 +328,19 @@ export default function DashboardPage() {
                   sales.map((sale, index) => (
                     <TableRow key={`${typeof sale._id === 'object' && sale._id !== null ? sale._id.timestamp : sale._id}-${index}`}>
                       <TableCell>{format(new Date(sale.timeCreatedAt * 1000), 'dd/MM/yyyy')}</TableCell>
-                      <TableCell>{format(new Date(sale.timeCreatedAt * 1000), 'HH:mm:ss')}</TableCell>
                       <TableCell>{sale.invoiceNumber}</TableCell>
                       <TableCell>{(typeof sale.purchaseStock === 'number' && !isNaN(sale.purchaseStock)) ? sale.purchaseStock.toFixed(2) : '0.00'}</TableCell>
-                      <TableCell>{sale.runningTotal?.toFixed(2)}</TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center">No sales to display.</TableCell>
+                    <TableCell colSpan={3} className="text-center">No sales to display.</TableCell>
                   </TableRow>
                 )}
               </TableBody>
               <TableFooter>
                 <TableRow>
-                  <TableCell colSpan={4} className="text-right font-bold">Total Purchase Stock</TableCell>
+                  <TableCell colSpan={2} className="text-right font-bold">Total Purchase Stock</TableCell>
                   <TableCell className="font-bold">{totalPurchaseStock.toFixed(2)}</TableCell>
                 </TableRow>
               </TableFooter>
@@ -353,3 +351,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
