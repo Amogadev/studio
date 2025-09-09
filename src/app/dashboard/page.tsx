@@ -326,7 +326,7 @@ export default function DashboardPage() {
         setNewExpenseDate(undefined);
         setNewExpenseAmount("");
         // Optionally, refresh the expenses list
-        if (selectedStore && fromDate && toDate) {
+        if (selectedStore && fromDate && toDate && activeTab === 'expenses') {
           handleGetExpenses();
         }
       } else {
@@ -490,7 +490,7 @@ export default function DashboardPage() {
           <TabsContent value="expenses">
             <Card>
               <CardHeader className="flex flex-row items-center justify-end">
-                <Button onClick={() => setAddAccountOpen(true)}>Add Account</Button>
+                 <Button onClick={() => setAddAccountOpen(true)}>Add Account</Button>
               </CardHeader>
               <CardContent>
                 <Table>
