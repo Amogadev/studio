@@ -170,7 +170,7 @@ export default function DashboardPage() {
 
       if (response.ok) {
         const data = await response.json();
-        const expensesData = data.data || [];
+        const expensesData = (data.data || []).map((e: any) => ({...e, storeName: stores.find(s => s.id === selectedStore)?.name || ''}));
         setExpenses(expensesData);
         
         const total = expensesData.reduce((acc: number, expense: Expense) => acc + expense.amount, 0);
@@ -679,8 +679,5 @@ export default function DashboardPage() {
       </Dialog>
     </div>
   );
-}
-
-    
 
     
