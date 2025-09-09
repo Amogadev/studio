@@ -506,7 +506,7 @@ export default function DashboardPage() {
                       expenses.map((expense, index) => (
                         <TableRow key={index}>
                           <TableCell>{expense.storeName}</TableCell>
-                          <TableCell>{format(new Date(expense.date), 'PPP')}</TableCell>
+                          <TableCell>{expense.date}</TableCell>
                           <TableCell className="text-right">₹ {expense.amount.toFixed(2)}</TableCell>
                         </TableRow>
                       ))
