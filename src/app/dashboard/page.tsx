@@ -182,8 +182,9 @@ export default function DashboardPage() {
             
             let runningTotal = 0;
             const salesWithRunningTotal = detailedSales.map(sale => {
-              runningTotal += sale.purchaseStock || 0;
-              return { ...sale, runningTotal };
+              const purchaseStock = sale.purchaseStock || 0;
+              runningTotal += purchaseStock;
+              return { ...sale, purchaseStock, runningTotal };
             });
 
             setSales(salesWithRunningTotal);
