@@ -24,6 +24,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -77,6 +78,7 @@ interface Sale {
   invoiceNumber: string;
   timeCreatedAt: number;
   _id: SaleId;
+  purchaseStock: number;
 }
 
 interface Store {
@@ -198,6 +200,8 @@ export default function DashboardPage() {
     }
   };
 
+  const totalPurchaseStock = sales.reduce((total, sale) => total + (sale.purchaseStock || 0), 0);
+
   if (!isAuthenticated) {
     return null; // or a loading spinner
   }
@@ -302,6 +306,8 @@ export default function DashboardPage() {
                   <TableHead>Date</TableHead>
                   <TableHead>Purchase Detail</TableHead>
                   <TableHead>ID Time</TableHead>
+                  <TableHead>Invoice Number</TableHead>
+                  <TableHead>Purchase Stock</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -311,14 +317,22 @@ export default function DashboardPage() {
                       <TableCell>{format(new Date(sale.timeCreatedAt * 1000), 'dd/MM/yyyy')}</TableCell>
                       <TableCell>{sale.invoiceNumber}</TableCell>
                       <TableCell>{sale._id.timestamp ? format(new Date(sale._id.timestamp * 1000), 'HH:mm:ss') : 'N/A'}</TableCell>
+                      <TableCell>{sale.invoiceNumber}</TableCell>
+                      <TableCell>{sale.purchaseStock}</TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={3} className="text-center">No sales to display.</TableCell>
+                    <TableCell colSpan={5} className="text-center">No sales to display.</TableCell>
                   </TableRow>
                 )}
               </TableBody>
+              <TableFooter>
+                <TableRow>
+                  <TableCell colSpan={4} className="text-right font-bold">Total Purchase Stock</TableCell>
+                  <TableCell className="font-bold">{totalPurchaseStock.toFixed(2)}</TableCell>
+                </TableRow>
+              </TableFooter>
             </Table>
           </CardContent>
         </Card>
