@@ -142,14 +142,33 @@ export default function DashboardPage() {
       if (response.ok) {
         const data = await response.json();
         const salesData = data.data || [];
-        setSales(salesData);
 
         if (salesData.length === 0) {
           toast({
             title: "No Sales Found",
             description: "No sales were found for the selected criteria.",
           });
+          setSales([]);
+        } else {
+            const detailedSalesPromises = salesData.map(async (sale: any) => {
+              const detailResponse = await fetch(`https://tnfl2-cb6ea45c64b3.herokuapp.com/services/sales/id?id=${sale._id}`, {
+                 method: 'GET',
+                 headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}`,
+                },
+              });
+              if(detailResponse.ok) {
+                const detailData = await detailResponse.json();
+                return { ...sale, invoiceNumber: detailData.data.invoiceNumber };
+              }
+              return sale; // fallback to original sale data if detail fetch fails
+            });
+
+            const detailedSales = await Promise.all(detailedSalesPromises);
+            setSales(detailedSales);
         }
+
       } else {
         const errorData = await response.json();
         toast({
