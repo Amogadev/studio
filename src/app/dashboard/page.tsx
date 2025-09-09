@@ -66,7 +66,7 @@ const initialStores = [
 interface Sale {
   invoiceNumber: string;
   timeCreatedAt: number;
-  _id: string;
+  _id: string | { [key: string]: any };
 }
 
 interface Store {
@@ -160,10 +160,9 @@ export default function DashboardPage() {
               });
               if(detailResponse.ok) {
                 const detailData = await detailResponse.json();
-                // The detailData.data is the full sale object
                 return detailData.data; 
               }
-              return null; // Or handle error appropriately
+              return null;
             });
 
             const detailedSales = (await Promise.all(detailedSalesPromises)).filter(Boolean) as Sale[];
@@ -291,7 +290,7 @@ export default function DashboardPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Date</TableHead>
-                  <TableHead>Invoice Number</TableHead>
+                  <TableHead>Purchase Detail</TableHead>
                   <TableHead>ID</TableHead>
                 </TableRow>
               </TableHeader>
@@ -301,7 +300,7 @@ export default function DashboardPage() {
                     <TableRow key={`${sale._id}-${index}`}>
                       <TableCell>{format(new Date(sale.timeCreatedAt * 1000), 'dd/MM/yyyy')}</TableCell>
                       <TableCell>{sale.invoiceNumber}</TableCell>
-                      <TableCell>{sale._id}</TableCell>
+                      <TableCell>{typeof sale._id === 'object' ? JSON.stringify(sale._id) : sale._id}</TableCell>
                     </TableRow>
                   ))
                 ) : (
