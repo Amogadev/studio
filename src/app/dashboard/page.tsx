@@ -79,6 +79,7 @@ interface Sale {
   timeCreatedAt: number;
   _id: SaleId;
   purchaseStock: number;
+  runningTotal?: number;
 }
 
 interface Store {
@@ -178,7 +179,14 @@ export default function DashboardPage() {
             });
 
             const detailedSales = (await Promise.all(detailedSalesPromises)).filter(Boolean) as Sale[];
-            setSales(detailedSales);
+            
+            let runningTotal = 0;
+            const salesWithRunningTotal = detailedSales.map(sale => {
+              runningTotal += sale.purchaseStock || 0;
+              return { ...sale, runningTotal };
+            });
+
+            setSales(salesWithRunningTotal);
         }
 
       } else {
@@ -308,6 +316,7 @@ export default function DashboardPage() {
                   <TableHead>ID Time</TableHead>
                   <TableHead>Invoice Number</TableHead>
                   <TableHead>Purchase Stock</TableHead>
+                  <TableHead>Total Purchase Stock</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -319,17 +328,18 @@ export default function DashboardPage() {
                       <TableCell>{sale._id.timestamp ? format(new Date(sale._id.timestamp * 1000), 'HH:mm:ss') : 'N/A'}</TableCell>
                       <TableCell>{sale.invoiceNumber}</TableCell>
                       <TableCell>{sale.purchaseStock}</TableCell>
+                      <TableCell>{sale.runningTotal?.toFixed(2)}</TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center">No sales to display.</TableCell>
+                    <TableCell colSpan={6} className="text-center">No sales to display.</TableCell>
                   </TableRow>
                 )}
               </TableBody>
               <TableFooter>
                 <TableRow>
-                  <TableCell colSpan={4} className="text-right font-bold">Total Purchase Stock</TableCell>
+                  <TableCell colSpan={5} className="text-right font-bold">Total Purchase Stock</TableCell>
                   <TableCell className="font-bold">{totalPurchaseStock.toFixed(2)}</TableCell>
                 </TableRow>
               </TableFooter>
