@@ -270,16 +270,16 @@ export default function DashboardPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Invoice Number</TableHead>
                   <TableHead>Date</TableHead>
+                  <TableHead>Invoice Number</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {sales.length > 0 ? (
                   sales.map((sale) => (
                     <TableRow key={sale._id}>
-                      <TableCell>{sale.invoiceNumber}</TableCell>
                       <TableCell>{format(new Date(sale.timeCreatedAt * 1000), 'dd/MM/yyyy')}</TableCell>
+                      <TableCell>{sale.invoiceNumber}</TableCell>
                     </TableRow>
                   ))
                 ) : (
