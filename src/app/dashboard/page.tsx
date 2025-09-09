@@ -142,7 +142,7 @@ export default function DashboardPage() {
         to: format(toDate, "yyyy-MM-dd"),
       });
 
-      const response = await fetch(`https://tnfl2-cb6ea45c64b3.herokuapp.com/services/admin/expenses/get?${queryParams.toString()}`, {
+      const response = await fetch(`https://tnfl2-cb6ea45c64b3.herokuapp.com/admin/expenses/get?${queryParams.toString()}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -432,3 +432,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
