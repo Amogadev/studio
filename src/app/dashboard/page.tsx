@@ -233,10 +233,13 @@ export default function DashboardPage() {
     }
     
     try {
+      const fromTime = Math.floor(new Date(fromDate).getTime() / 1000);
+      const toTime = Math.floor(new Date(toDate).getTime() / 1000);
+
       const queryParams = new URLSearchParams({
         shopNumber: selectedStore,
-        fromTime: Math.floor(fromDate.getTime() / 1000).toString(),
-        toTime: Math.floor(toDate.getTime() / 1000).toString(),
+        fromTime: fromTime.toString(),
+        toTime: toTime.toString(),
       });
 
       const response = await fetch(`https://tnfl2-cb6ea45c64b3.herokuapp.com/services/admin/sales?${queryParams.toString()}`, {
@@ -706,5 +709,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    
