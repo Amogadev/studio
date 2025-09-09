@@ -160,12 +160,13 @@ export default function DashboardPage() {
               });
               if(detailResponse.ok) {
                 const detailData = await detailResponse.json();
-                return { ...sale, invoiceNumber: detailData.data.invoiceNumber };
+                // The detailData.data is the full sale object
+                return detailData.data; 
               }
-              return sale; // fallback to original sale data if detail fetch fails
+              return null; // Or handle error appropriately
             });
 
-            const detailedSales = await Promise.all(detailedSalesPromises);
+            const detailedSales = (await Promise.all(detailedSalesPromises)).filter(Boolean) as Sale[];
             setSales(detailedSales);
         }
 
@@ -290,7 +291,8 @@ export default function DashboardPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Date</TableHead>
-                  <TableHead>Purchase Detail</TableHead>
+                  <TableHead>Invoice Number</TableHead>
+                  <TableHead>ID</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -299,11 +301,12 @@ export default function DashboardPage() {
                     <TableRow key={sale._id}>
                       <TableCell>{format(new Date(sale.timeCreatedAt * 1000), 'dd/MM/yyyy')}</TableCell>
                       <TableCell>{sale.invoiceNumber}</TableCell>
+                      <TableCell>{sale._id}</TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={2} className="text-center">No sales to display.</TableCell>
+                    <TableCell colSpan={3} className="text-center">No sales to display.</TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -314,3 +317,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
