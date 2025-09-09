@@ -85,15 +85,9 @@ interface Expense {
 }
 
 interface Sale {
-  transactionId: string;
-  timestamp: string;
-  totalAmount: number;
-  items: {
-    sku: string;
-    name: string;
-    quantity: number;
-    price: number;
-  }[];
+  invoiceNumber: string;
+  timeCreatedAt: number;
+  _id: string;
 }
 
 interface Store {
@@ -108,8 +102,6 @@ export default function DashboardPage() {
   const [expenses, setExpenses] = React.useState<Expense[]>([]);
   const [totalAmount, setTotalAmount] = React.useState<number>(0);
   const [sales, setSales] = React.useState<Sale[]>([]);
-  const [totalSalesAmount, setTotalSalesAmount] = React.useState<number>(0);
-  
   const router = useRouter();
   const { toast } = useToast();
 
@@ -252,11 +244,8 @@ export default function DashboardPage() {
 
       if (response.ok) {
         const data = await response.json();
-        const salesData = data.sales || [];
+        const salesData = data.data || [];
         setSales(salesData);
-        
-        const total = salesData.reduce((acc: number, sale: Sale) => acc + sale.totalAmount, 0);
-        setTotalSalesAmount(total);
 
         if (salesData.length === 0) {
           toast({
@@ -272,7 +261,6 @@ export default function DashboardPage() {
           description: errorData.message || "An error occurred while fetching data.",
         });
         setSales([]);
-        setTotalSalesAmount(0);
       }
     } catch (error) {
       toast({
@@ -281,7 +269,6 @@ export default function DashboardPage() {
         description: "Something went wrong. Please try again later.",
       });
       setSales([]);
-      setTotalSalesAmount(0);
     }
   };
   
@@ -545,40 +532,26 @@ export default function DashboardPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Transaction ID</TableHead>
+                      <TableHead>Invoice Number</TableHead>
                       <TableHead>Date</TableHead>
-                      <TableHead>Items</TableHead>
-                      <TableHead className="text-right">Amount</TableHead>
+                      <TableHead>ID</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {sales.length > 0 ? (
                       sales.map((sale) => (
-                        <TableRow key={sale.transactionId}>
-                          <TableCell>{sale.transactionId}</TableCell>
-                          <TableCell>{format(new Date(parseInt(sale.timestamp) * 1000), 'PPP p')}</TableCell>
-                          <TableCell>
-                            <ul className="list-disc pl-5">
-                              {sale.items.map((item, index) => (
-                                <li key={index}>{item.name} (x{item.quantity})</li>
-                              ))}
-                            </ul>
-                          </TableCell>
-                          <TableCell className="text-right">₹ {sale.totalAmount.toFixed(2)}</TableCell>
+                        <TableRow key={sale._id}>
+                          <TableCell>{sale.invoiceNumber}</TableCell>
+                          <TableCell>{format(new Date(sale.timeCreatedAt * 1000), 'yyyy-MM-dd')}</TableCell>
+                          <TableCell>{sale._id}</TableCell>
                         </TableRow>
                       ))
                     ) : (
                       <TableRow>
-                        <TableCell colSpan={4} className="text-center">No sales to display.</TableCell>
+                        <TableCell colSpan={3} className="text-center">No sales to display.</TableCell>
                       </TableRow>
                     )}
                   </TableBody>
-                  <TableFooter>
-                    <TableRow>
-                      <TableCell colSpan={3} className="text-lg font-semibold">Total Sales</TableCell>
-                      <TableCell className="text-right text-lg font-semibold">₹ {totalSalesAmount.toFixed(2)}</TableCell>
-                    </TableRow>
-                  </TableFooter>
                 </Table>
               </CardContent>
             </Card>
