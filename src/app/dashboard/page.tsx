@@ -404,7 +404,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
         
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-8">
             <Card>
               <CardHeader>
                 <CardTitle className="text-xl">Purchase Report</CardTitle>
@@ -437,8 +437,7 @@ export default function DashboardPage() {
                   </TableBody>
                   <TableFooter>
                     <TableRow>
-                      <TableCell colSpan={1} className="text-right font-bold">Grand Total</TableCell>
-                      <TableCell className="font-bold">{grandTotalPurchases}</TableCell>
+                      <TableCell colSpan={2} className="text-right font-bold">Grand Total</TableCell>
                       <TableCell className="font-bold">{grandTotalPurchaseValue.toFixed(2)}</TableCell>
                     </TableRow>
                   </TableFooter>
@@ -484,3 +483,4 @@ export default function DashboardPage() {
     </div>
   );
 }
+
