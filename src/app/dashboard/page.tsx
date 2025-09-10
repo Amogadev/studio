@@ -71,6 +71,7 @@ interface DailyReport {
     date: Date;
     totalSalesQuantity: number;
     totalPurchaseStock: number;
+    totalSaleValue: number;
 }
 
 
@@ -173,10 +174,17 @@ export default function DashboardPage() {
                  return daySum + stock;
               }, 0) ?? 0;
 
+              const dayTotalSaleValue = day.productList?.reduce((daySum: number, item: any) => {
+                 const value = (typeof item.totalSaleAmount === 'number' && !isNaN(item.totalSaleAmount)) ? item.totalSaleAmount : 0;
+                 return daySum + value;
+              }, 0) ?? 0;
+
+
               return {
                 date: addDays(fromDate, index),
                 totalSalesQuantity: dayTotalSalesQuantity,
-                totalPurchaseStock: dayTotalPurchaseStock
+                totalPurchaseStock: dayTotalPurchaseStock,
+                totalSaleValue: dayTotalSaleValue,
               };
             });
             setReports(processedReports);
@@ -205,6 +213,7 @@ export default function DashboardPage() {
 
   const grandTotalSales = reports.reduce((total, report) => total + ((typeof report.totalSalesQuantity === 'number' && !isNaN(report.totalSalesQuantity)) ? report.totalSalesQuantity : 0), 0);
   const grandTotalPurchases = reports.reduce((total, report) => total + ((typeof report.totalPurchaseStock === 'number' && !isNaN(report.totalPurchaseStock)) ? report.totalPurchaseStock : 0), 0);
+  const grandTotalSaleValue = reports.reduce((total, report) => total + ((typeof report.totalSaleValue === 'number' && !isNaN(report.totalSaleValue)) ? report.totalSaleValue : 0), 0);
 
 
   if (!isAuthenticated) {
@@ -323,6 +332,7 @@ export default function DashboardPage() {
                     <TableRow>
                       <TableHead>Date</TableHead>
                       <TableHead>Total Sales Quantity</TableHead>
+                      <TableHead>Total Sale Value</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -333,11 +343,12 @@ export default function DashboardPage() {
                             {format(report.date, 'dd/MM/yyyy')}
                           </TableCell>
                           <TableCell>{(typeof report.totalSalesQuantity === 'number' && !isNaN(report.totalSalesQuantity)) ? report.totalSalesQuantity : '0'}</TableCell>
+                          <TableCell>{(typeof report.totalSaleValue === 'number' && !isNaN(report.totalSaleValue)) ? report.totalSaleValue.toFixed(2) : '0.00'}</TableCell>
                         </TableRow>
                       ))
                     ) : (
                       <TableRow>
-                        <TableCell colSpan={2} className="text-center">No sales to display.</TableCell>
+                        <TableCell colSpan={3} className="text-center">No sales to display.</TableCell>
                       </TableRow>
                     )}
                   </TableBody>
@@ -345,6 +356,7 @@ export default function DashboardPage() {
                     <TableRow>
                       <TableCell colSpan={1} className="text-right font-bold">Grand Total</TableCell>
                       <TableCell className="font-bold">{grandTotalSales}</TableCell>
+                      <TableCell className="font-bold">{grandTotalSaleValue.toFixed(2)}</TableCell>
                     </TableRow>
                   </TableFooter>
                 </Table>
