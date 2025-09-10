@@ -480,7 +480,7 @@ export default function DashboardPage() {
                   </TableBody>
                   <TableFooter>
                     <TableRow>
-                      <TableCell colSpan={2} className="text-right font-bold">Grand Total</TableCell>
+                      <TableCell colSpan={1} className="text-right font-bold">Grand Total</TableCell>
                       <TableCell className="font-bold">{grandTotalSales}</TableCell>
                       <TableCell className="font-bold">{grandTotalSaleValue.toFixed(2)}</TableCell>
                     </TableRow>
@@ -527,3 +527,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
