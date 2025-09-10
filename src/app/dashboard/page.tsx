@@ -371,7 +371,14 @@ export default function DashboardPage() {
                 </Popover>
               </div>
               <Button onClick={handleGetProductMaster} disabled={isLoading}>
-                Get Product Master
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Please wait
+                  </>
+                ) : (
+                  "Get Product Master"
+                )}
               </Button>
               <Button onClick={handleGetSales} disabled={isLoading}>
                 {isLoading ? (
