@@ -450,7 +450,7 @@ export default function DashboardPage() {
 
             <Card>
               <CardHeader>
-                <CardTitle className="text-xl">Sales Report</CardTitle>
+                <CardTitle className="text-xl">Product Master</CardTitle>
               </CardHeader>
               <CardContent>
                 <Table>
