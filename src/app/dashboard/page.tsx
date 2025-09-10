@@ -107,6 +107,14 @@ export default function DashboardPage() {
     router.push("/");
   };
 
+  const handleGetProductMaster = async () => {
+    // TODO: Implement product master fetch logic
+    toast({
+      title: "Coming Soon",
+      description: "This feature is not yet implemented.",
+    });
+  };
+
   const handleGetSales = async () => {
     const token = localStorage.getItem("accessToken");
     if (!token) {
@@ -233,7 +241,7 @@ export default function DashboardPage() {
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
         <Card>
           <CardContent className="pt-6">
-            <div className="grid grid-cols-1 items-end gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid grid-cols-1 items-end gap-4 md:grid-cols-3 lg:grid-cols-5">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Store</label>
                 <Select value={selectedStore} onValueChange={setSelectedStore}>
@@ -307,6 +315,9 @@ export default function DashboardPage() {
                   </PopoverContent>
                 </Popover>
               </div>
+              <Button onClick={handleGetProductMaster} disabled={isLoading}>
+                Get Product Master
+              </Button>
               <Button onClick={handleGetSales} disabled={isLoading}>
                 {isLoading ? (
                   <>
