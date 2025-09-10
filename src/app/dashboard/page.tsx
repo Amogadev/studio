@@ -132,11 +132,11 @@ export default function DashboardPage() {
 
       const queryParams = new URLSearchParams({
         shopNumber: selectedStore,
-        fromDate: fromTime.toString(),
-        toDate: toTime.toString(),
+        fromTime: fromTime.toString(),
+        toTime: toTime.toString(),
       });
 
-      const response = await fetch(`https://tnfl2-cb6ea45c64b3.herokuapp.com/services/sales/daywise?${queryParams.toString()}`, {
+      const response = await fetch(`https://tnfl2-cb6ea45c64b3.herokuapp.com/services/sales/id?${queryParams.toString()}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
