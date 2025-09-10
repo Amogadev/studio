@@ -88,6 +88,7 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = React.useState(false);
   const router = useRouter();
   const { toast } = useToast();
+  const [productMasterData, setProductMasterData] = React.useState<any | null>(null);
 
   const [stores, setStores] = React.useState<Store[]>(initialStores);
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
@@ -144,10 +145,11 @@ export default function DashboardPage() {
 
       if (response.ok) {
         const responseData = await response.json();
+        setProductMasterData(responseData);
         console.log('Product Master Data:', responseData);
         toast({
           title: "Success",
-          description: "Product master data fetched successfully. Check the console for the data.",
+          description: "Product master data fetched successfully.",
         });
       } else {
         const errorData = await response.json();
@@ -469,5 +471,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    
