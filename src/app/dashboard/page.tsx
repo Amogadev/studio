@@ -157,8 +157,7 @@ export default function DashboardPage() {
           });
           setReports([]);
         } else {
-            const processedReports: DailyReport[] = [];
-            dayWiseData.forEach((day: any, index: number) => {
+            const processedReports: DailyReport[] = dayWiseData.map((day: any, index: number) => {
               const dayTotalSalesQuantity = day.productList?.reduce((daySum: number, item: any) => {
                  const quantity = (typeof item.sales === 'number' && !isNaN(item.sales)) ? item.sales : 0;
                  return daySum + quantity;
@@ -169,11 +168,11 @@ export default function DashboardPage() {
                  return daySum + stock;
               }, 0) ?? 0;
 
-              processedReports.push({
+              return {
                 date: addDays(fromDate, index),
                 totalSalesQuantity: dayTotalSalesQuantity,
                 totalPurchaseStock: dayTotalPurchaseStock
-              });
+              };
             });
             setReports(processedReports);
         }
@@ -389,5 +388,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    
