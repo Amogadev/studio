@@ -285,7 +285,6 @@ export default function DashboardPage() {
     }
   };
 
-  const grandTotalPurchases = reports.reduce((total, report) => total + ((typeof report.totalPurchaseStock === 'number' && !isNaN(report.totalPurchaseStock)) ? report.totalPurchaseStock : 0), 0);
   const grandTotalPurchaseValue = reports.reduce((total, report) => total + ((typeof report.totalPurchaseValue === 'number' && !isNaN(report.totalPurchaseValue)) ? report.totalPurchaseValue : 0), 0);
 
 
@@ -404,7 +403,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
         
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-8">
             <Card>
               <CardHeader>
                 <CardTitle className="text-xl">Purchase Report</CardTitle>
