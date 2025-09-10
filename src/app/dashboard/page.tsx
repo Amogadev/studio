@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import {
   Select,
@@ -65,9 +67,10 @@ const initialStores = [
   { id: "50", name: "Test Store" },
 ];
 
-interface DailySale {
+interface DailyReport {
     date: Date;
-    totalQuantity: number;
+    totalSalesQuantity: number;
+    totalPurchaseStock: number;
 }
 
 
@@ -80,7 +83,7 @@ export default function DashboardPage() {
   const [fromDate, setFromDate] = React.useState<Date | undefined>();
   const [toDate, setToDate] = React.useState<Date | undefined>();
   const [selectedStore, setSelectedStore] = React.useState<string>("");
-  const [sales, setSales] = React.useState<DailySale[]>([]);
+  const [reports, setReports] = React.useState<DailyReport[]>([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const router = useRouter();
   const { toast } = useToast();
@@ -149,34 +152,40 @@ export default function DashboardPage() {
 
         if (dayWiseData.length === 0) {
           toast({
-            title: "No Sales Found",
-            description: "No sales were found for the selected criteria.",
+            title: "No Data Found",
+            description: "No data was found for the selected criteria.",
           });
-          setSales([]);
+          setReports([]);
         } else {
-            const processedSales: DailySale[] = [];
+            const processedReports: DailyReport[] = [];
             dayWiseData.forEach((day: any, index: number) => {
-              const dayTotalQuantity = day.productList?.reduce((daySum: number, item: any) => {
+              const dayTotalSalesQuantity = day.productList?.reduce((daySum: number, item: any) => {
                  const quantity = (typeof item.sales === 'number' && !isNaN(item.sales)) ? item.sales : 0;
                  return daySum + quantity;
               }, 0) ?? 0;
+              
+              const dayTotalPurchaseStock = day.productList?.reduce((daySum: number, item: any) => {
+                 const stock = (typeof item.purchaseStock === 'number' && !isNaN(item.purchaseStock)) ? item.purchaseStock : 0;
+                 return daySum + stock;
+              }, 0) ?? 0;
 
-              processedSales.push({
+              processedReports.push({
                 date: addDays(fromDate, index),
-                totalQuantity: dayTotalQuantity,
+                totalSalesQuantity: dayTotalSalesQuantity,
+                totalPurchaseStock: dayTotalPurchaseStock
               });
             });
-            setSales(processedSales);
+            setReports(processedReports);
         }
 
       } else {
         const errorData = await response.json();
         toast({
           variant: "destructive",
-          title: "Failed to Fetch Sales",
+          title: "Failed to Fetch Data",
           description: errorData.message || `API Error with status: ${response.status}`,
         });
-        setSales([]);
+        setReports([]);
       }
     } catch (error) {
       toast({
@@ -184,13 +193,14 @@ export default function DashboardPage() {
         title: "An Error Occurred",
         description: "Something went wrong. Please try again later.",
       });
-      setSales([]);
+      setReports([]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const grandTotal = sales.reduce((total, sale) => total + ((typeof sale.totalQuantity === 'number' && !isNaN(sale.totalQuantity)) ? sale.totalQuantity : 0), 0);
+  const grandTotalSales = reports.reduce((total, report) => total + ((typeof report.totalSalesQuantity === 'number' && !isNaN(report.totalSalesQuantity)) ? report.totalSalesQuantity : 0), 0);
+  const grandTotalPurchases = reports.reduce((total, report) => total + ((typeof report.totalPurchaseStock === 'number' && !isNaN(report.totalPurchaseStock)) ? report.totalPurchaseStock : 0), 0);
 
 
   if (!isAuthenticated) {
@@ -298,45 +308,86 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
         
-        <Card>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Total Sales Quantity</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {sales.length > 0 ? (
-                  sales.map((sale, index) => (
-                    <TableRow key={`${sale.date.toISOString()}-${index}`}>
-                      <TableCell>
-                        {format(sale.date, 'dd/MM/yyyy')}
-                      </TableCell>
-                      <TableCell>{(typeof sale.totalQuantity === 'number' && !isNaN(sale.totalQuantity)) ? sale.totalQuantity : '0'}</TableCell>
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Sales Report</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Total Sales Quantity</TableHead>
                     </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={2} className="text-center">No sales to display.</TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-              <TableFooter>
-                <TableRow>
-                  <TableCell colSpan={1} className="text-right font-bold">Grand Total</TableCell>
-                  <TableCell className="font-bold">{grandTotal}</TableCell>
-                </TableRow>
-              </TableFooter>
-            </Table>
-          </CardContent>
-        </Card>
+                  </TableHeader>
+                  <TableBody>
+                    {reports.length > 0 ? (
+                      reports.map((report, index) => (
+                        <TableRow key={`${report.date.toISOString()}-${index}-sales`}>
+                          <TableCell>
+                            {format(report.date, 'dd/MM/yyyy')}
+                          </TableCell>
+                          <TableCell>{(typeof report.totalSalesQuantity === 'number' && !isNaN(report.totalSalesQuantity)) ? report.totalSalesQuantity : '0'}</TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={2} className="text-center">No sales to display.</TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                  <TableFooter>
+                    <TableRow>
+                      <TableCell colSpan={1} className="text-right font-bold">Grand Total</TableCell>
+                      <TableCell className="font-bold">{grandTotalSales}</TableCell>
+                    </TableRow>
+                  </TableFooter>
+                </Table>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Purchase Report</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Total Purchase Stock</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {reports.length > 0 ? (
+                      reports.map((report, index) => (
+                        <TableRow key={`${report.date.toISOString()}-${index}-purchases`}>
+                          <TableCell>
+                            {format(report.date, 'dd/MM/yyyy')}
+                          </TableCell>
+                          <TableCell>{(typeof report.totalPurchaseStock === 'number' && !isNaN(report.totalPurchaseStock)) ? report.totalPurchaseStock : '0'}</TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={2} className="text-center">No purchases to display.</TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                  <TableFooter>
+                    <TableRow>
+                      <TableCell colSpan={1} className="text-right font-bold">Grand Total</TableCell>
+                      <TableCell className="font-bold">{grandTotalPurchases}</TableCell>
+                    </TableRow>
+                  </TableFooter>
+                </Table>
+              </CardContent>
+            </Card>
+        </div>
       </main>
     </div>
   );
 }
-
-    
 
     
