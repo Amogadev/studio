@@ -65,29 +65,12 @@ const initialStores = [
   { id: "50", name: "Test Store" },
 ];
 
-interface SaleId {
-  date: number;
-  machineIdentifier: number;
-  processIdentifier: number;
-  counter: number;
-  timestamp: number;
-  time: number;
-  timeSecond: number;
-}
-
-interface Product {
-  purchaseStock?: number;
-  SKU?: string;
-  purchasePrice?: number;
-}
-
 interface Sale {
-  invoiceNumber: string;
-  timeCreatedAt: number;
-  _id: SaleId;
-  totalPurchaseValue?: number;
-  productList?: Product[];
+    date: number;
+    purchasePrice: number;
+    totalPurchaseValue: number;
 }
+
 
 interface Store {
   id: string;
@@ -147,11 +130,11 @@ export default function DashboardPage() {
 
       const queryParams = new URLSearchParams({
         shopNumber: selectedStore,
-        fromTime: fromTime.toString(),
-        toTime: toTime.toString(),
+        fromDate: fromTime.toString(),
+        toDate: toTime.toString(),
       });
 
-      const response = await fetch(`https://tnfl2-cb6ea45c64b3.herokuapp.com/services/admin/sales?${queryParams.toString()}`, {
+      const response = await fetch(`https://tnfl2-cb6ea45c64b3.herokuapp.com/services/sales/daywise?${queryParams.toString()}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -161,7 +144,7 @@ export default function DashboardPage() {
 
       if (response.ok) {
         const data = await response.json();
-        const dayWiseData = data.data || [];
+        const dayWiseData = data.data?.dayWiseData || [];
 
         if (dayWiseData.length === 0) {
           toast({
@@ -172,17 +155,16 @@ export default function DashboardPage() {
         } else {
             const processedSales: Sale[] = [];
             dayWiseData.forEach((day: any) => {
-              const totalPurchaseValue = day.productList?.reduce((sum: number, item: any) => {
-                 const stock = (typeof item.purchaseStock === 'number' && !isNaN(item.purchaseStock)) ? item.purchaseStock : 0;
+              const dayTotalPurchaseValue = day.productList?.reduce((daySum: number, item: any) => {
+                 const sales = (typeof item.sales === 'number' && !isNaN(item.sales)) ? item.sales : 0;
                  const price = (typeof item.purchasePrice === 'number' && !isNaN(item.purchasePrice)) ? item.purchasePrice : 0;
-                 return sum + (stock * price);
+                 return daySum + (sales * price);
               }, 0) ?? 0;
 
               processedSales.push({
-                invoiceNumber: day.invoiceNumber,
-                timeCreatedAt: day.timeCreatedAt,
-                _id: day._id,
-                totalPurchaseValue: totalPurchaseValue,
+                date: day.date,
+                purchasePrice: day.productList?.reduce((sum: number, item: any) => sum + ((typeof item.purchasePrice === 'number' && !isNaN(item.purchasePrice)) ? item.purchasePrice : 0), 0) ?? 0,
+                totalPurchaseValue: dayTotalPurchaseValue,
               });
             });
             setSales(processedSales);
@@ -193,7 +175,7 @@ export default function DashboardPage() {
         toast({
           variant: "destructive",
           title: "Failed to Fetch Sales",
-          description: errorData.message || "An error occurred while fetching data.",
+          description: errorData.message || `API Error with status: ${response.status}`,
         });
         setSales([]);
       }
@@ -312,20 +294,20 @@ export default function DashboardPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Date</TableHead>
-                  <TableHead>Invoice Number</TableHead>
-                  <TableHead>Total Purchase Value</TableHead>
+                  <TableHead>Purchase Price</TableHead>
+                  <TableHead>Total Sales Value</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {sales.length > 0 ? (
                   sales.map((sale, index) => (
-                    <TableRow key={`${sale.invoiceNumber}-${index}`}>
+                    <TableRow key={`${sale.date}-${index}`}>
                       <TableCell>
-                        {typeof sale.timeCreatedAt === 'number' && !isNaN(sale.timeCreatedAt)
-                          ? format(new Date(sale.timeCreatedAt * 1000), 'dd/MM/yyyy')
+                        {typeof sale.date === 'number' && !isNaN(sale.date)
+                          ? format(new Date(sale.date * 1000), 'dd/MM/yyyy')
                           : 'Invalid Date'}
                       </TableCell>
-                      <TableCell>{sale.invoiceNumber}</TableCell>
+                      <TableCell>{(typeof sale.purchasePrice === 'number' && !isNaN(sale.purchasePrice)) ? sale.purchasePrice.toFixed(2) : '0.00'}</TableCell>
                       <TableCell>{(typeof sale.totalPurchaseValue === 'number' && !isNaN(sale.totalPurchaseValue)) ? sale.totalPurchaseValue.toFixed(2) : '0.00'}</TableCell>
                     </TableRow>
                   ))
