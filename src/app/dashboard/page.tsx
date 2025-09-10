@@ -324,7 +324,7 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 gap-8">
             <Card>
               <CardHeader>
-                <CardTitle>Purchase Report</CardTitle>
+                <CardTitle className="text-xl">Purchase Report</CardTitle>
               </CardHeader>
               <CardContent>
                 <Table>
@@ -362,7 +362,7 @@ export default function DashboardPage() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Sales Report</CardTitle>
+                <CardTitle className="text-xl">Sales Report</CardTitle>
               </CardHeader>
               <CardContent>
                 <Table>
