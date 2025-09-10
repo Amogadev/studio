@@ -72,6 +72,7 @@ interface DailyReport {
     totalSalesQuantity: number;
     totalPurchaseStock: number;
     totalSaleValue: number;
+    totalPurchaseValue: number;
 }
 
 
@@ -86,6 +87,7 @@ export default function DashboardPage() {
   const [selectedStore, setSelectedStore] = React.useState<string>("");
   const [reports, setReports] = React.useState<DailyReport[]>([]);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [isFetchingMaster, setIsFetchingMaster] = React.useState(false);
   const router = useRouter();
   const { toast } = useToast();
   const [productMasterData, setProductMasterData] = React.useState<any | null>(null);
@@ -129,7 +131,7 @@ export default function DashboardPage() {
       return;
     }
     
-    setIsLoading(true);
+    setIsFetchingMaster(true);
     try {
       const queryParams = new URLSearchParams({
         shopNumber: selectedStore,
@@ -166,7 +168,7 @@ export default function DashboardPage() {
         description: "Something went wrong while fetching product master data.",
       });
     } finally {
-      setIsLoading(false);
+      setIsFetchingMaster(false);
     }
   };
 
@@ -226,6 +228,7 @@ export default function DashboardPage() {
           });
           setReports([]);
         } else {
+            const productMap = new Map(productMasterData?.data?.productList?.map((p: any) => [p.SKU, p]) ?? []);
             const processedReports: DailyReport[] = dayWiseData.map((day: any, index: number) => {
               const dayTotalSalesQuantity = day.productList?.reduce((daySum: number, item: any) => {
                  const quantity = (typeof item.sales === 'number' && !isNaN(item.sales)) ? item.sales : 0;
@@ -241,6 +244,14 @@ export default function DashboardPage() {
                  const value = (typeof item.totalSaleAmount === 'number' && !isNaN(item.totalSaleAmount)) ? item.totalSaleAmount : 0;
                  return daySum + value;
               }, 0) ?? 0;
+              
+              const dayTotalPurchaseValue = day.productList?.reduce((daySum: number, item: any) => {
+                 const masterProduct = productMap.get(item.SKU);
+                 const purchasePrice = masterProduct?.purchasePrice ?? 0;
+                 const stock = (typeof item.purchaseStock === 'number' && !isNaN(item.purchaseStock)) ? item.purchaseStock : 0;
+                 const value = stock * purchasePrice;
+                 return daySum + value;
+              }, 0) ?? 0;
 
 
               return {
@@ -248,6 +259,7 @@ export default function DashboardPage() {
                 totalSalesQuantity: dayTotalSalesQuantity,
                 totalPurchaseStock: dayTotalPurchaseStock,
                 totalSaleValue: dayTotalSaleValue,
+                totalPurchaseValue: dayTotalPurchaseValue,
               };
             });
             setReports(processedReports);
@@ -277,6 +289,7 @@ export default function DashboardPage() {
   const grandTotalSales = reports.reduce((total, report) => total + ((typeof report.totalSalesQuantity === 'number' && !isNaN(report.totalSalesQuantity)) ? report.totalSalesQuantity : 0), 0);
   const grandTotalPurchases = reports.reduce((total, report) => total + ((typeof report.totalPurchaseStock === 'number' && !isNaN(report.totalPurchaseStock)) ? report.totalPurchaseStock : 0), 0);
   const grandTotalSaleValue = reports.reduce((total, report) => total + ((typeof report.totalSaleValue === 'number' && !isNaN(report.totalSaleValue)) ? report.totalSaleValue : 0), 0);
+  const grandTotalPurchaseValue = reports.reduce((total, report) => total + ((typeof report.totalPurchaseValue === 'number' && !isNaN(report.totalPurchaseValue)) ? report.totalPurchaseValue : 0), 0);
 
 
   if (!isAuthenticated) {
@@ -370,8 +383,8 @@ export default function DashboardPage() {
                   </PopoverContent>
                 </Popover>
               </div>
-              <Button onClick={handleGetProductMaster} disabled={isLoading}>
-                {isLoading ? (
+              <Button onClick={handleGetProductMaster} disabled={isFetchingMaster}>
+                {isFetchingMaster ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Please wait
@@ -405,6 +418,7 @@ export default function DashboardPage() {
                     <TableRow>
                       <TableHead>Date</TableHead>
                       <TableHead>Total Purchase Stock</TableHead>
+                      <TableHead>Total Purchase Value</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -415,11 +429,12 @@ export default function DashboardPage() {
                             {format(report.date, 'dd/MM/yyyy')}
                           </TableCell>
                           <TableCell>{(typeof report.totalPurchaseStock === 'number' && !isNaN(report.totalPurchaseStock)) ? report.totalPurchaseStock : '0'}</TableCell>
+                          <TableCell>{(typeof report.totalPurchaseValue === 'number' && !isNaN(report.totalPurchaseValue)) ? report.totalPurchaseValue.toFixed(2) : '0.00'}</TableCell>
                         </TableRow>
                       ))
                     ) : (
                       <TableRow>
-                        <TableCell colSpan={2} className="text-center">No purchases to display.</TableCell>
+                        <TableCell colSpan={3} className="text-center">No purchases to display.</TableCell>
                       </TableRow>
                     )}
                   </TableBody>
@@ -427,6 +442,7 @@ export default function DashboardPage() {
                     <TableRow>
                       <TableCell colSpan={1} className="text-right font-bold">Grand Total</TableCell>
                       <TableCell className="font-bold">{grandTotalPurchases}</TableCell>
+                      <TableCell className="font-bold">{grandTotalPurchaseValue.toFixed(2)}</TableCell>
                     </TableRow>
                   </TableFooter>
                 </Table>
@@ -478,3 +494,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
