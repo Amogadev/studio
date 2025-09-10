@@ -136,7 +136,7 @@ export default function DashboardPage() {
         toTime: toTime.toString(),
       });
 
-      const response = await fetch(`https://tnfl2-cb6ea45c64b3.herokuapp.com/services/sales/id?${queryParams.toString()}`, {
+      const response = await fetch(`https://tnfl2-cb6ea45c64b3.herokuapp.com/admin/sales?${queryParams.toString()}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -343,3 +343,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
