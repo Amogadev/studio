@@ -31,7 +31,7 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { Calendar as CalendarIcon, Loader2, LogOut } from "lucide-react";
-import { format } from "date-fns";
+import { format, addDays } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 
@@ -66,7 +66,7 @@ const initialStores = [
 ];
 
 interface DailySale {
-    date: number;
+    date: Date;
     totalQuantity: number;
 }
 
@@ -144,8 +144,8 @@ export default function DashboardPage() {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        const dayWiseData = data.data?.dayWiseData || [];
+        const responseData = await response.json();
+        const dayWiseData = responseData.data || [];
 
         if (dayWiseData.length === 0) {
           toast({
@@ -155,14 +155,14 @@ export default function DashboardPage() {
           setSales([]);
         } else {
             const processedSales: DailySale[] = [];
-            dayWiseData.forEach((day: any) => {
+            dayWiseData.forEach((day: any, index: number) => {
               const dayTotalQuantity = day.productList?.reduce((daySum: number, item: any) => {
                  const quantity = (typeof item.sales === 'number' && !isNaN(item.sales)) ? item.sales : 0;
                  return daySum + quantity;
               }, 0) ?? 0;
 
               processedSales.push({
-                date: day.date,
+                date: addDays(fromDate, index),
                 totalQuantity: dayTotalQuantity,
               });
             });
@@ -310,11 +310,9 @@ export default function DashboardPage() {
               <TableBody>
                 {sales.length > 0 ? (
                   sales.map((sale, index) => (
-                    <TableRow key={`${sale.date}-${index}`}>
+                    <TableRow key={`${sale.date.toISOString()}-${index}`}>
                       <TableCell>
-                        {typeof sale.date === 'number' && !isNaN(sale.date)
-                          ? format(new Date(sale.date * 1000), 'dd/MM/yyyy')
-                          : 'Invalid Date'}
+                        {format(sale.date, 'dd/MM/yyyy')}
                       </TableCell>
                       <TableCell>{(typeof sale.totalQuantity === 'number' && !isNaN(sale.totalQuantity)) ? sale.totalQuantity : '0'}</TableCell>
                     </TableRow>
@@ -338,5 +336,7 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
 
     
