@@ -350,7 +350,6 @@ export default function DashboardPage() {
                 <TableRow>
                   <TableHead>Date</TableHead>
                   <TableHead>Invoice Number</TableHead>
-
                   <TableHead>Total Purchase Value</TableHead>
                 </TableRow>
               </TableHeader>
