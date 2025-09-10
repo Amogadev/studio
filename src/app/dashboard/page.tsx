@@ -73,7 +73,6 @@ interface DailyReport {
     totalPurchaseStock: number;
     totalSaleValue: number;
     totalPurchaseValue: number;
-    totalPurchaseCost: number;
 }
 
 
@@ -254,21 +253,12 @@ export default function DashboardPage() {
                 return daySum + value;
               }, 0) ?? 0;
               
-              const dayTotalPurchaseCost = day.productList?.reduce((daySum: number, item: any) => {
-                const masterProduct = productMap.get(item.SKU);
-                const purchasePrice = masterProduct?.purchasePrice ?? 0;
-                const sales = (typeof item.sales === 'number' && !isNaN(item.sales)) ? item.sales : 0;
-                const value = sales * purchasePrice;
-                return daySum + value;
-              }, 0) ?? 0;
-
               return {
                 date: addDays(fromDate, index),
                 totalSalesQuantity: dayTotalSalesQuantity,
                 totalPurchaseStock: dayTotalPurchaseStock,
                 totalSaleValue: dayTotalSaleValue,
                 totalPurchaseValue: dayTotalPurchaseValue,
-                totalPurchaseCost: dayTotalPurchaseCost,
               };
             });
             setReports(processedReports);
@@ -299,7 +289,6 @@ export default function DashboardPage() {
   const grandTotalPurchases = reports.reduce((total, report) => total + ((typeof report.totalPurchaseStock === 'number' && !isNaN(report.totalPurchaseStock)) ? report.totalPurchaseStock : 0), 0);
   const grandTotalSaleValue = reports.reduce((total, report) => total + ((typeof report.totalSaleValue === 'number' && !isNaN(report.totalSaleValue)) ? report.totalSaleValue : 0), 0);
   const grandTotalPurchaseValue = reports.reduce((total, report) => total + ((typeof report.totalPurchaseValue === 'number' && !isNaN(report.totalPurchaseValue)) ? report.totalPurchaseValue : 0), 0);
-  const grandTotalPurchaseCost = reports.reduce((total, report) => total + ((typeof report.totalPurchaseCost === 'number' && !isNaN(report.totalPurchaseCost)) ? report.totalPurchaseCost : 0), 0);
 
 
   if (!isAuthenticated) {
@@ -470,7 +459,6 @@ export default function DashboardPage() {
                       <TableHead>Date</TableHead>
                       <TableHead>Total Sales Quantity</TableHead>
                       <TableHead>Total Sale Value</TableHead>
-                      <TableHead>Total Purchase Cost</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -482,12 +470,11 @@ export default function DashboardPage() {
                           </TableCell>
                           <TableCell>{(typeof report.totalSalesQuantity === 'number' && !isNaN(report.totalSalesQuantity)) ? report.totalSalesQuantity : '0'}</TableCell>
                           <TableCell>{(typeof report.totalSaleValue === 'number' && !isNaN(report.totalSaleValue)) ? report.totalSaleValue.toFixed(2) : '0.00'}</TableCell>
-                          <TableCell>{(typeof report.totalPurchaseCost === 'number' && !isNaN(report.totalPurchaseCost)) ? report.totalPurchaseCost.toFixed(2) : '0.00'}</TableCell>
                         </TableRow>
                       ))
                     ) : (
                       <TableRow>
-                        <TableCell colSpan={4} className="text-center">No sales to display.</TableCell>
+                        <TableCell colSpan={3} className="text-center">No sales to display.</TableCell>
                       </TableRow>
                     )}
                   </TableBody>
@@ -496,7 +483,6 @@ export default function DashboardPage() {
                       <TableCell colSpan={1} className="text-right font-bold">Grand Total</TableCell>
                       <TableCell className="font-bold">{grandTotalSales}</TableCell>
                       <TableCell className="font-bold">{grandTotalSaleValue.toFixed(2)}</TableCell>
-                      <TableCell className="font-bold">{grandTotalPurchaseCost.toFixed(2)}</TableCell>
                     </TableRow>
                   </TableFooter>
                 </Table>
@@ -539,5 +525,7 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
 
     
