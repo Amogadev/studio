@@ -67,7 +67,6 @@ const initialStores = [
 
 interface Sale {
     date: number;
-    purchasePrice: number;
     totalPurchaseValue: number;
 }
 
@@ -165,7 +164,6 @@ export default function DashboardPage() {
 
               processedSales.push({
                 date: day.date,
-                purchasePrice: day.productList?.reduce((sum: number, item: any) => sum + ((typeof item.purchasePrice === 'number' && !isNaN(item.purchasePrice)) ? item.purchasePrice : 0), 0) ?? 0,
                 totalPurchaseValue: dayTotalPurchaseValue,
               });
             });
@@ -307,7 +305,6 @@ export default function DashboardPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Date</TableHead>
-                  <TableHead>Purchase Price</TableHead>
                   <TableHead>Total Sales Value</TableHead>
                 </TableRow>
               </TableHeader>
@@ -320,19 +317,18 @@ export default function DashboardPage() {
                           ? format(new Date(sale.date * 1000), 'dd/MM/yyyy')
                           : 'Invalid Date'}
                       </TableCell>
-                      <TableCell>{(typeof sale.purchasePrice === 'number' && !isNaN(sale.purchasePrice)) ? sale.purchasePrice.toFixed(2) : '0.00'}</TableCell>
                       <TableCell>{(typeof sale.totalPurchaseValue === 'number' && !isNaN(sale.totalPurchaseValue)) ? sale.totalPurchaseValue.toFixed(2) : '0.00'}</TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={3} className="text-center">No sales to display.</TableCell>
+                    <TableCell colSpan={2} className="text-center">No sales to display.</TableCell>
                   </TableRow>
                 )}
               </TableBody>
               <TableFooter>
                 <TableRow>
-                  <TableCell colSpan={2} className="text-right font-bold">Grand Total</TableCell>
+                  <TableCell colSpan={1} className="text-right font-bold">Grand Total</TableCell>
                   <TableCell className="font-bold">{grandTotal.toFixed(2)}</TableCell>
                 </TableRow>
               </TableFooter>
