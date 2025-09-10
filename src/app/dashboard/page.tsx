@@ -62,6 +62,7 @@ const initialStores = [
   { id: "46", name: "COVAI NO1" },
   { id: "47", name: "COVAI FRIENDS" },
   { id: "48", name: "FRINEDS SATUUR" },
+  { id: "50", name: "Test Store" },
 ];
 
 interface SaleId {
@@ -76,13 +77,15 @@ interface SaleId {
 
 interface Product {
   purchaseStock?: number;
+  SKU?: string;
+  purchasePrice?: number;
 }
 
 interface Sale {
   invoiceNumber: string;
   timeCreatedAt: number;
   _id: SaleId;
-  purchaseStock?: number;
+  totalPurchaseValue?: number;
   productList?: Product[];
 }
 
@@ -139,6 +142,29 @@ export default function DashboardPage() {
     }
     
     try {
+      // 1. Fetch account data to get purchase prices
+      const accountResponse = await fetch(`https://tnfl2-cb6ea45c64b3.herokuapp.com/services/admin/account?shopNumber=${selectedStore}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (!accountResponse.ok) {
+        throw new Error('Failed to fetch account data.');
+      }
+      const accountData = await accountResponse.json();
+      const priceMap = new Map<string, number>();
+      if (accountData.data && accountData.data.productList) {
+        accountData.data.productList.forEach((product: any) => {
+          if(product.SKU && typeof product.purchasePrice === 'number') {
+            priceMap.set(product.SKU, product.purchasePrice);
+          }
+        });
+      }
+
+      // 2. Fetch sales list
       const fromTime = Math.floor(new Date(fromDate).getTime() / 1000);
       const toTime = Math.floor(new Date(toDate).getTime() / 1000);
 
@@ -167,6 +193,7 @@ export default function DashboardPage() {
           });
           setSales([]);
         } else {
+            // 3. Fetch sale details for each sale
             const detailedSalesPromises = salesData.map(async (sale: any) => {
               const detailResponse = await fetch(`https://tnfl2-cb6ea45c64b3.herokuapp.com/services/sales/id?id=${sale._id}`, {
                  method: 'GET',
@@ -184,15 +211,17 @@ export default function DashboardPage() {
 
             const detailedSales = (await Promise.all(detailedSalesPromises)).filter(Boolean) as Sale[];
             
-            const salesWithTotalPurchaseStock = detailedSales.map(sale => {
-              const totalPurchaseStock = sale.productList?.reduce((sum, product) => {
+            // 4. Calculate total purchase value for each sale
+            const salesWithTotalValue = detailedSales.map(sale => {
+              const totalPurchaseValue = sale.productList?.reduce((sum, product) => {
                 const stock = (typeof product.purchaseStock === 'number' && !isNaN(product.purchaseStock)) ? product.purchaseStock : 0;
-                return sum + stock;
+                const price = product.SKU ? priceMap.get(product.SKU) || 0 : 0;
+                return sum + (stock * price);
               }, 0) ?? 0;
-              return { ...sale, purchaseStock: totalPurchaseStock };
+              return { ...sale, totalPurchaseValue: totalPurchaseValue };
             });
 
-            setSales(salesWithTotalPurchaseStock);
+            setSales(salesWithTotalValue);
         }
 
       } else {
@@ -214,7 +243,7 @@ export default function DashboardPage() {
     }
   };
 
-  const totalPurchaseStock = sales.reduce((total, sale) => total + ((typeof sale.purchaseStock === 'number' && !isNaN(sale.purchaseStock)) ? sale.purchaseStock : 0), 0);
+  const grandTotal = sales.reduce((total, sale) => total + ((typeof sale.totalPurchaseValue === 'number' && !isNaN(sale.totalPurchaseValue)) ? sale.totalPurchaseValue : 0), 0);
 
 
   if (!isAuthenticated) {
@@ -319,27 +348,29 @@ export default function DashboardPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Date</TableHead>
-                  <TableHead>Purchase Stock</TableHead>
+                  <TableHead>Invoice Number</TableHead>
+                  <TableHead>Total Purchase Value</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {sales.length > 0 ? (
                   sales.map((sale, index) => (
-                    <TableRow key={`${typeof sale._id === 'object' && sale._id !== null ? sale._id.timestamp : sale._id}-${index}`}>
+                    <TableRow key={`${sale.invoiceNumber}-${index}`}>
                       <TableCell>{format(new Date(sale.timeCreatedAt * 1000), 'dd/MM/yyyy')}</TableCell>
-                      <TableCell>{(typeof sale.purchaseStock === 'number' && !isNaN(sale.purchaseStock)) ? sale.purchaseStock.toFixed(2) : '0.00'}</TableCell>
+                      <TableCell>{sale.invoiceNumber}</TableCell>
+                      <TableCell>{(typeof sale.totalPurchaseValue === 'number' && !isNaN(sale.totalPurchaseValue)) ? sale.totalPurchaseValue.toFixed(2) : '0.00'}</TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={2} className="text-center">No sales to display.</TableCell>
+                    <TableCell colSpan={3} className="text-center">No sales to display.</TableCell>
                   </TableRow>
                 )}
               </TableBody>
               <TableFooter>
                 <TableRow>
-                  <TableCell colSpan={1} className="text-right font-bold">Total Purchase Stock</TableCell>
-                  <TableCell className="font-bold">{totalPurchaseStock.toFixed(2)}</TableCell>
+                  <TableCell colSpan={2} className="text-right font-bold">Grand Total</TableCell>
+                  <TableCell className="font-bold">{grandTotal.toFixed(2)}</TableCell>
                 </TableRow>
               </TableFooter>
             </Table>
