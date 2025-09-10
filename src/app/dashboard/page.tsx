@@ -503,6 +503,38 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
         </div>
+
+        {productMasterData?.data?.productList && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-xl">Product Master Data</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>SKU</TableHead>
+                    <TableHead>Purchase Price</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {productMasterData.data.productList.length > 0 ? (
+                    productMasterData.data.productList.map((product: any) => (
+                      <TableRow key={product.SKU}>
+                        <TableCell>{product.SKU}</TableCell>
+                        <TableCell>{typeof product.purchasePrice === 'number' ? product.purchasePrice.toFixed(2) : 'N/A'}</TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={2} className="text-center">No product master data to display.</TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        )}
       </main>
     </div>
   );
