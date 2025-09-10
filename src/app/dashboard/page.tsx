@@ -285,9 +285,7 @@ export default function DashboardPage() {
     }
   };
 
-  const grandTotalSales = reports.reduce((total, report) => total + ((typeof report.totalSalesQuantity === 'number' && !isNaN(report.totalSalesQuantity)) ? report.totalSalesQuantity : 0), 0);
   const grandTotalPurchases = reports.reduce((total, report) => total + ((typeof report.totalPurchaseStock === 'number' && !isNaN(report.totalPurchaseStock)) ? report.totalPurchaseStock : 0), 0);
-  const grandTotalSaleValue = reports.reduce((total, report) => total + ((typeof report.totalSaleValue === 'number' && !isNaN(report.totalSaleValue)) ? report.totalSaleValue : 0), 0);
   const grandTotalPurchaseValue = reports.reduce((total, report) => total + ((typeof report.totalPurchaseValue === 'number' && !isNaN(report.totalPurchaseValue)) ? report.totalPurchaseValue : 0), 0);
 
 
@@ -406,7 +404,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
         
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-8">
             <Card>
               <CardHeader>
                 <CardTitle className="text-xl">Purchase Report</CardTitle>
@@ -442,47 +440,6 @@ export default function DashboardPage() {
                       <TableCell colSpan={1} className="text-right font-bold">Grand Total</TableCell>
                       <TableCell className="font-bold">{grandTotalPurchases}</TableCell>
                       <TableCell className="font-bold">{grandTotalPurchaseValue.toFixed(2)}</TableCell>
-                    </TableRow>
-                  </TableFooter>
-                </Table>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl">Sales Report</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Total Sales Quantity</TableHead>
-                      <TableHead>Total Sale Value</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {reports.length > 0 ? (
-                      reports.map((report, index) => (
-                        <TableRow key={`${report.date.toISOString()}-${index}-sales`}>
-                          <TableCell>
-                            {format(report.date, 'dd/MM/yyyy')}
-                          </TableCell>
-                          <TableCell>{(typeof report.totalSalesQuantity === 'number' && !isNaN(report.totalSalesQuantity)) ? report.totalSalesQuantity : '0'}</TableCell>
-                          <TableCell>{(typeof report.totalSaleValue === 'number' && !isNaN(report.totalSaleValue)) ? report.totalSaleValue.toFixed(2) : '0.00'}</TableCell>
-                        </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={3} className="text-center">No sales to display.</TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                  <TableFooter>
-                    <TableRow>
-                      <TableCell colSpan={1} className="text-right font-bold">Grand Total</TableCell>
-                      <TableCell className="font-bold">{grandTotalSales}</TableCell>
-                      <TableCell className="font-bold">{grandTotalSaleValue.toFixed(2)}</TableCell>
                     </TableRow>
                   </TableFooter>
                 </Table>
