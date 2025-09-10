@@ -129,8 +129,13 @@ export default function DashboardPage() {
     
     setIsLoading(true);
     try {
-      const fromTime = Math.floor(new Date(fromDate).getTime() / 1000);
-      const toTime = Math.floor(new Date(toDate).getTime() / 1000);
+      const fromDateStart = new Date(fromDate);
+      fromDateStart.setHours(0, 0, 0, 0);
+      const fromTime = Math.floor(fromDateStart.getTime() / 1000);
+
+      const toDateEnd = new Date(toDate);
+      toDateEnd.setHours(23, 59, 59, 999);
+      const toTime = Math.floor(toDateEnd.getTime() / 1000);
 
       const queryParams = new URLSearchParams({
         shopNumber: selectedStore,
