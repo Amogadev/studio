@@ -245,7 +245,7 @@ export default function DashboardPage() {
                  const value = (typeof item.totalSaleAmount === 'number' && !isNaN(item.totalSaleAmount)) ? item.totalSaleAmount : 0;
                  return daySum + value;
               }, 0) ?? 0;
-              
+
               const dayTotalPurchaseValue = day.productList?.reduce((daySum: number, item: any) => {
                 const masterProduct = productMap.get(item.SKU);
                 const purchasePrice = masterProduct?.purchasePrice ?? 0;
@@ -261,7 +261,6 @@ export default function DashboardPage() {
                 const value = sales * purchasePrice;
                 return daySum + value;
               }, 0) ?? 0;
-
 
               return {
                 date: addDays(fromDate, index),
@@ -508,3 +507,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
