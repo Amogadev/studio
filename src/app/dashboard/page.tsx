@@ -30,7 +30,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { Calendar as CalendarIcon, LogOut } from "lucide-react";
+import { Calendar as CalendarIcon, Loader2, LogOut } from "lucide-react";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
@@ -82,6 +82,7 @@ export default function DashboardPage() {
   const [toDate, setToDate] = React.useState<Date | undefined>();
   const [selectedStore, setSelectedStore] = React.useState<string>("");
   const [sales, setSales] = React.useState<Sale[]>([]);
+  const [isLoading, setIsLoading] = React.useState(false);
   const router = useRouter();
   const { toast } = useToast();
 
@@ -124,6 +125,7 @@ export default function DashboardPage() {
       return;
     }
     
+    setIsLoading(true);
     try {
       const fromTime = Math.floor(new Date(fromDate).getTime() / 1000);
       const toTime = Math.floor(new Date(toDate).getTime() / 1000);
@@ -186,6 +188,8 @@ export default function DashboardPage() {
         description: "Something went wrong. Please try again later.",
       });
       setSales([]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -283,7 +287,16 @@ export default function DashboardPage() {
                   </PopoverContent>
                 </Popover>
               </div>
-              <Button onClick={handleGetSales}>Get Report</Button>
+              <Button onClick={handleGetSales} disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Please wait
+                  </>
+                ) : (
+                  "Get Report"
+                )}
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -330,7 +343,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    
-
-    
