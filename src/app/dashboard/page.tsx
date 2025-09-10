@@ -404,7 +404,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
         
-        <div className="grid grid-cols-1 gap-8">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
             <Card>
               <CardHeader>
                 <CardTitle className="text-xl">Purchase Report</CardTitle>
@@ -445,44 +445,42 @@ export default function DashboardPage() {
                 </Table>
               </CardContent>
             </Card>
-        </div>
 
-        {productMasterData?.data?.productList && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-xl">Product Master</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>SKU</TableHead>
-                    <TableHead>Purchase Price</TableHead>
-                    <TableHead>Sale Price</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {productMasterData.data.productList.length > 0 ? (
-                    productMasterData.data.productList.map((product: any) => (
-                      <TableRow key={product.SKU}>
-                        <TableCell>{product.SKU}</TableCell>
-                        <TableCell>{typeof product.purchasePrice === 'number' ? product.purchasePrice.toFixed(2) : 'N/A'}</TableCell>
-                        <TableCell>{typeof product.salePrice === 'number' ? product.salePrice.toFixed(2) : 'N/A'}</TableCell>
+            {productMasterData?.data?.productList && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-xl">Product Master</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>SKU</TableHead>
+                        <TableHead>Purchase Price</TableHead>
+                        <TableHead>Sale Price</TableHead>
                       </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={3} className="text-center">No product master data to display.</TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        )}
+                    </TableHeader>
+                    <TableBody>
+                      {productMasterData.data.productList.length > 0 ? (
+                        productMasterData.data.productList.map((product: any) => (
+                          <TableRow key={product.SKU}>
+                            <TableCell>{product.SKU}</TableCell>
+                            <TableCell>{typeof product.purchasePrice === 'number' ? product.purchasePrice.toFixed(2) : 'N/A'}</TableCell>
+                            <TableCell>{typeof product.salePrice === 'number' ? product.salePrice.toFixed(2) : 'N/A'}</TableCell>
+                          </TableRow>
+                        ))
+                      ) : (
+                        <TableRow>
+                          <TableCell colSpan={3} className="text-center">No product master data to display.</TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            )}
+        </div>
       </main>
     </div>
   );
 }
-
-    
