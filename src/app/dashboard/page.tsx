@@ -389,7 +389,7 @@ export default function DashboardPage() {
                   "Get Product Master"
                 )}
               </Button>
-              <Button onClick={handleGetSales} disabled={isLoading}>
+              <Button onClick={handleGetSales} disabled={isLoading || !productMasterData}>
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
