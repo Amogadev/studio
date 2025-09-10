@@ -456,7 +456,6 @@ export default function DashboardPage() {
                       <TableRow>
                         <TableHead>SKU</TableHead>
                         <TableHead>Purchase Price</TableHead>
-                        <TableHead>Sale Price</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -465,12 +464,11 @@ export default function DashboardPage() {
                           <TableRow key={product.SKU}>
                             <TableCell>{product.SKU}</TableCell>
                             <TableCell>{typeof product.purchasePrice === 'number' ? product.purchasePrice.toFixed(2) : 'N/A'}</TableCell>
-                            <TableCell>{typeof product.salePrice === 'number' ? product.salePrice.toFixed(2) : 'N/A'}</TableCell>
                           </TableRow>
                         ))
                       ) : (
                         <TableRow>
-                          <TableCell colSpan={3} className="text-center">No product master data to display.</TableCell>
+                          <TableCell colSpan={2} className="text-center">No product master data to display.</TableCell>
                         </TableRow>
                       )}
                     </TableBody>
@@ -484,3 +482,4 @@ export default function DashboardPage() {
   );
 }
 
+    
