@@ -228,7 +228,7 @@ export default function DashboardPage() {
           });
           setReports([]);
         } else {
-            const productMap = new Map(productMasterData?.data?.productList?.map((p: any) => [p.SKU, p]) ?? []);
+            const productMap = new Map(productMasterData?.productList?.map((p: any) => [p.SKU, p]) ?? []);
             const processedReports: DailyReport[] = dayWiseData.map((day: any, index: number) => {
               const dayTotalSalesQuantity = day.productList?.reduce((daySum: number, item: any) => {
                  const quantity = (typeof item.sales === 'number' && !isNaN(item.sales)) ? item.sales : 0;
@@ -404,7 +404,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
         
-        <div className="grid grid-cols-1 gap-8">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
             <Card>
               <CardHeader>
                 <CardTitle className="text-xl">Purchase Report</CardTitle>
@@ -458,8 +458,8 @@ export default function DashboardPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {productMasterData?.data?.productList?.length > 0 ? (
-                      productMasterData.data.productList.map((product: any) => (
+                    {productMasterData?.productList?.length > 0 ? (
+                      productMasterData.productList.map((product: any) => (
                         <TableRow key={product.SKU}>
                           <TableCell>{product.SKU}</TableCell>
                           <TableCell>{typeof product.purchasePrice === 'number' ? product.purchasePrice.toFixed(2) : 'N/A'}</TableCell>
@@ -479,3 +479,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
