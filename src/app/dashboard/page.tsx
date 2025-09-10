@@ -321,7 +321,45 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
         
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-8">
+            <Card>
+              <CardHeader>
+                <CardTitle>Purchase Report</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Total Purchase Stock</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {reports.length > 0 ? (
+                      reports.map((report, index) => (
+                        <TableRow key={`${report.date.toISOString()}-${index}-purchases`}>
+                          <TableCell>
+                            {format(report.date, 'dd/MM/yyyy')}
+                          </TableCell>
+                          <TableCell>{(typeof report.totalPurchaseStock === 'number' && !isNaN(report.totalPurchaseStock)) ? report.totalPurchaseStock : '0'}</TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={2} className="text-center">No purchases to display.</TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                  <TableFooter>
+                    <TableRow>
+                      <TableCell colSpan={1} className="text-right font-bold">Grand Total</TableCell>
+                      <TableCell className="font-bold">{grandTotalPurchases}</TableCell>
+                    </TableRow>
+                  </TableFooter>
+                </Table>
+              </CardContent>
+            </Card>
+
             <Card>
               <CardHeader>
                 <CardTitle>Sales Report</CardTitle>
@@ -357,44 +395,6 @@ export default function DashboardPage() {
                       <TableCell colSpan={1} className="text-right font-bold">Grand Total</TableCell>
                       <TableCell className="font-bold">{grandTotalSales}</TableCell>
                       <TableCell className="font-bold">{grandTotalSaleValue.toFixed(2)}</TableCell>
-                    </TableRow>
-                  </TableFooter>
-                </Table>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Purchase Report</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Total Purchase Stock</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {reports.length > 0 ? (
-                      reports.map((report, index) => (
-                        <TableRow key={`${report.date.toISOString()}-${index}-purchases`}>
-                          <TableCell>
-                            {format(report.date, 'dd/MM/yyyy')}
-                          </TableCell>
-                          <TableCell>{(typeof report.totalPurchaseStock === 'number' && !isNaN(report.totalPurchaseStock)) ? report.totalPurchaseStock : '0'}</TableCell>
-                        </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={2} className="text-center">No purchases to display.</TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                  <TableFooter>
-                    <TableRow>
-                      <TableCell colSpan={1} className="text-right font-bold">Grand Total</TableCell>
-                      <TableCell className="font-bold">{grandTotalPurchases}</TableCell>
                     </TableRow>
                   </TableFooter>
                 </Table>
