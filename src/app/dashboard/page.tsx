@@ -108,11 +108,64 @@ export default function DashboardPage() {
   };
 
   const handleGetProductMaster = async () => {
-    // TODO: Implement product master fetch logic
-    toast({
-      title: "Coming Soon",
-      description: "This feature is not yet implemented.",
-    });
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      toast({
+        variant: "destructive",
+        title: "Authentication Error",
+        description: "You are not logged in.",
+      });
+      router.push("/");
+      return;
+    }
+
+    if (!selectedStore) {
+      toast({
+        variant: "destructive",
+        title: "Missing Information",
+        description: "Please select a store.",
+      });
+      return;
+    }
+    
+    setIsLoading(true);
+    try {
+      const queryParams = new URLSearchParams({
+        shopNumber: selectedStore,
+      });
+
+      const response = await fetch(`https://tnfl2-cb6ea45c64b3.herokuapp.com/services/admin/account?${queryParams.toString()}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const responseData = await response.json();
+        console.log('Product Master Data:', responseData);
+        toast({
+          title: "Success",
+          description: "Product master data fetched successfully. Check the console for the data.",
+        });
+      } else {
+        const errorData = await response.json();
+        toast({
+          variant: "destructive",
+          title: "Failed to Fetch Product Master",
+          description: errorData.message || `API Error with status: ${response.status}`,
+        });
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "An Error Occurred",
+        description: "Something went wrong while fetching product master data.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleGetSales = async () => {
@@ -416,3 +469,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
