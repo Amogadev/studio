@@ -246,11 +246,11 @@ export default function DashboardPage() {
               }, 0) ?? 0;
               
               const dayTotalPurchaseValue = day.productList?.reduce((daySum: number, item: any) => {
-                 const masterProduct = productMap.get(item.SKU);
-                 const purchasePrice = masterProduct?.purchasePrice ?? 0;
-                 const stock = (typeof item.purchaseStock === 'number' && !isNaN(item.purchaseStock)) ? item.purchaseStock : 0;
-                 const value = stock * purchasePrice;
-                 return daySum + value;
+                const masterProduct = productMap.get(item.SKU);
+                const purchasePrice = masterProduct?.purchasePrice ?? 0;
+                const stock = (typeof item.purchaseStock === 'number' && !isNaN(item.purchaseStock)) ? item.purchaseStock : 0;
+                const value = stock * purchasePrice;
+                return daySum + value;
               }, 0) ?? 0;
 
 
@@ -494,6 +494,8 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
 
     
 
