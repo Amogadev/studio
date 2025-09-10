@@ -320,7 +320,11 @@ export default function DashboardPage() {
                 {sales.length > 0 ? (
                   sales.map((sale, index) => (
                     <TableRow key={`${sale.invoiceNumber}-${index}`}>
-                      <TableCell>{format(new Date(sale.timeCreatedAt * 1000), 'dd/MM/yyyy')}</TableCell>
+                      <TableCell>
+                        {typeof sale.timeCreatedAt === 'number' && !isNaN(sale.timeCreatedAt)
+                          ? format(new Date(sale.timeCreatedAt * 1000), 'dd/MM/yyyy')
+                          : 'Invalid Date'}
+                      </TableCell>
                       <TableCell>{sale.invoiceNumber}</TableCell>
                       <TableCell>{(typeof sale.totalPurchaseValue === 'number' && !isNaN(sale.totalPurchaseValue)) ? sale.totalPurchaseValue.toFixed(2) : '0.00'}</TableCell>
                     </TableRow>
