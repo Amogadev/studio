@@ -406,7 +406,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
         
-        <div className="grid grid-cols-1 gap-8">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
             <Card>
               <CardHeader>
                 <CardTitle className="text-xl">Purchase Report</CardTitle>
@@ -450,7 +450,7 @@ export default function DashboardPage() {
 
             <Card>
               <CardHeader>
-                <CardTitle className="text-xl">Product Master</CardTitle>
+                <CardTitle className="text-xl">Sales Report</CardTitle>
               </CardHeader>
               <CardContent>
                 <Table>
@@ -480,7 +480,7 @@ export default function DashboardPage() {
                   </TableBody>
                   <TableFooter>
                     <TableRow>
-                      <TableCell colSpan={1} className="text-right font-bold">Grand Total</TableCell>
+                      <TableCell colSpan={2} className="text-right font-bold">Grand Total</TableCell>
                       <TableCell className="font-bold">{grandTotalSales}</TableCell>
                       <TableCell className="font-bold">{grandTotalSaleValue.toFixed(2)}</TableCell>
                     </TableRow>
@@ -493,7 +493,7 @@ export default function DashboardPage() {
         {productMasterData?.data?.productList && (
           <Card>
             <CardHeader>
-              <CardTitle className="text-xl">Product Master Data</CardTitle>
+              <CardTitle className="text-xl">Product Master</CardTitle>
             </CardHeader>
             <CardContent>
               <Table>
@@ -501,6 +501,7 @@ export default function DashboardPage() {
                   <TableRow>
                     <TableHead>SKU</TableHead>
                     <TableHead>Purchase Price</TableHead>
+                    <TableHead>Sale Price</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -509,11 +510,12 @@ export default function DashboardPage() {
                       <TableRow key={product.SKU}>
                         <TableCell>{product.SKU}</TableCell>
                         <TableCell>{typeof product.purchasePrice === 'number' ? product.purchasePrice.toFixed(2) : 'N/A'}</TableCell>
+                        <TableCell>{typeof product.salePrice === 'number' ? product.salePrice.toFixed(2) : 'N/A'}</TableCell>
                       </TableRow>
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={2} className="text-center">No product master data to display.</TableCell>
+                      <TableCell colSpan={3} className="text-center">No product master data to display.</TableCell>
                     </TableRow>
                   )}
                 </TableBody>
@@ -525,7 +527,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    
-
-    
