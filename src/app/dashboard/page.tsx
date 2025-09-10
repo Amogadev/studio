@@ -65,9 +65,9 @@ const initialStores = [
   { id: "50", name: "Test Store" },
 ];
 
-interface Sale {
+interface DailySale {
     date: number;
-    totalPurchaseValue: number;
+    totalQuantity: number;
 }
 
 
@@ -80,7 +80,7 @@ export default function DashboardPage() {
   const [fromDate, setFromDate] = React.useState<Date | undefined>();
   const [toDate, setToDate] = React.useState<Date | undefined>();
   const [selectedStore, setSelectedStore] = React.useState<string>("");
-  const [sales, setSales] = React.useState<Sale[]>([]);
+  const [sales, setSales] = React.useState<DailySale[]>([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const router = useRouter();
   const { toast } = useToast();
@@ -154,17 +154,16 @@ export default function DashboardPage() {
           });
           setSales([]);
         } else {
-            const processedSales: Sale[] = [];
+            const processedSales: DailySale[] = [];
             dayWiseData.forEach((day: any) => {
-              const dayTotalPurchaseValue = day.productList?.reduce((daySum: number, item: any) => {
-                 const sales = (typeof item.sales === 'number' && !isNaN(item.sales)) ? item.sales : 0;
-                 const price = (typeof item.purchasePrice === 'number' && !isNaN(item.purchasePrice)) ? item.purchasePrice : 0;
-                 return daySum + (sales * price);
+              const dayTotalQuantity = day.productList?.reduce((daySum: number, item: any) => {
+                 const quantity = (typeof item.sales === 'number' && !isNaN(item.sales)) ? item.sales : 0;
+                 return daySum + quantity;
               }, 0) ?? 0;
 
               processedSales.push({
                 date: day.date,
-                totalPurchaseValue: dayTotalPurchaseValue,
+                totalQuantity: dayTotalQuantity,
               });
             });
             setSales(processedSales);
@@ -191,7 +190,7 @@ export default function DashboardPage() {
     }
   };
 
-  const grandTotal = sales.reduce((total, sale) => total + ((typeof sale.totalPurchaseValue === 'number' && !isNaN(sale.totalPurchaseValue)) ? sale.totalPurchaseValue : 0), 0);
+  const grandTotal = sales.reduce((total, sale) => total + ((typeof sale.totalQuantity === 'number' && !isNaN(sale.totalQuantity)) ? sale.totalQuantity : 0), 0);
 
 
   if (!isAuthenticated) {
@@ -305,7 +304,7 @@ export default function DashboardPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Date</TableHead>
-                  <TableHead>Total Sales Value</TableHead>
+                  <TableHead>Total Sales Quantity</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -317,7 +316,7 @@ export default function DashboardPage() {
                           ? format(new Date(sale.date * 1000), 'dd/MM/yyyy')
                           : 'Invalid Date'}
                       </TableCell>
-                      <TableCell>{(typeof sale.totalPurchaseValue === 'number' && !isNaN(sale.totalPurchaseValue)) ? sale.totalPurchaseValue.toFixed(2) : '0.00'}</TableCell>
+                      <TableCell>{(typeof sale.totalQuantity === 'number' && !isNaN(sale.totalQuantity)) ? sale.totalQuantity : '0'}</TableCell>
                     </TableRow>
                   ))
                 ) : (
@@ -329,7 +328,7 @@ export default function DashboardPage() {
               <TableFooter>
                 <TableRow>
                   <TableCell colSpan={1} className="text-right font-bold">Grand Total</TableCell>
-                  <TableCell className="font-bold">{grandTotal.toFixed(2)}</TableCell>
+                  <TableCell className="font-bold">{grandTotal}</TableCell>
                 </TableRow>
               </TableFooter>
             </Table>
@@ -339,3 +338,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
