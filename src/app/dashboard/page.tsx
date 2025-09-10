@@ -142,30 +142,6 @@ export default function DashboardPage() {
     }
     
     try {
-      // 1. Fetch account data to get purchase prices
-      const accountResponse = await fetch(`https://tnfl2-cb6ea45c64b3.herokuapp.com/services/admin/account?shopNumber=${selectedStore}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (!accountResponse.ok) {
-        throw new Error('Failed to fetch account data.');
-      }
-      const accountData = await accountResponse.json();
-      const priceMap = new Map<string, number>();
-      if (accountData.data && accountData.data.productList) {
-        accountData.data.productList.forEach((product: any) => {
-          if(product.SKU && typeof product.purchasePrice === 'number') {
-            const normalizedSku = product.SKU.trim().toLowerCase();
-            priceMap.set(normalizedSku, product.purchasePrice);
-          }
-        });
-      }
-
-      // 2. Fetch sales list
       const fromTime = Math.floor(new Date(fromDate).getTime() / 1000);
       const toTime = Math.floor(new Date(toDate).getTime() / 1000);
 
@@ -185,44 +161,31 @@ export default function DashboardPage() {
 
       if (response.ok) {
         const data = await response.json();
-        const salesData = data.data || [];
+        const dayWiseData = data.data || [];
 
-        if (salesData.length === 0) {
+        if (dayWiseData.length === 0) {
           toast({
             title: "No Sales Found",
             description: "No sales were found for the selected criteria.",
           });
           setSales([]);
         } else {
-            // 3. Fetch sale details for each sale
-            const detailedSalesPromises = salesData.map(async (sale: any) => {
-              const detailResponse = await fetch(`https://tnfl2-cb6ea45c64b3.herokuapp.com/services/sales/id?id=${sale._id}`, {
-                 method: 'GET',
-                 headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${token}`,
-                },
-              });
-              if(detailResponse.ok) {
-                const detailData = await detailResponse.json();
-                return { ...sale, ...detailData.data };
-              }
-              return null;
-            });
-
-            const detailedSales = (await Promise.all(detailedSalesPromises)).filter(Boolean) as Sale[];
-            
-            // 4. Calculate total purchase value for each sale
-            const salesWithTotalValue = detailedSales.map(sale => {
-              const totalPurchaseValue = sale.productList?.reduce((sum, product) => {
-                const stock = (typeof product.purchaseStock === 'number' && !isNaN(product.purchaseStock)) ? product.purchaseStock : 0;
-                const price = product.SKU ? priceMap.get(product.SKU.trim().toLowerCase()) || 0 : 0;
-                return sum + (stock * price);
+            const processedSales: Sale[] = [];
+            dayWiseData.forEach((day: any) => {
+              const totalPurchaseValue = day.productList?.reduce((sum: number, item: any) => {
+                 const stock = (typeof item.purchaseStock === 'number' && !isNaN(item.purchaseStock)) ? item.purchaseStock : 0;
+                 const price = (typeof item.purchasePrice === 'number' && !isNaN(item.purchasePrice)) ? item.purchasePrice : 0;
+                 return sum + (stock * price);
               }, 0) ?? 0;
-              return { ...sale, totalPurchaseValue: totalPurchaseValue };
-            });
 
-            setSales(salesWithTotalValue);
+              processedSales.push({
+                invoiceNumber: day.invoiceNumber,
+                timeCreatedAt: day.timeCreatedAt,
+                _id: day._id,
+                totalPurchaseValue: totalPurchaseValue,
+              });
+            });
+            setSales(processedSales);
         }
 
       } else {
