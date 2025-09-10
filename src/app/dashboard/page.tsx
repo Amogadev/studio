@@ -159,7 +159,8 @@ export default function DashboardPage() {
       if (accountData.data && accountData.data.productList) {
         accountData.data.productList.forEach((product: any) => {
           if(product.SKU && typeof product.purchasePrice === 'number') {
-            priceMap.set(product.SKU, product.purchasePrice);
+            const normalizedSku = product.SKU.trim().toLowerCase();
+            priceMap.set(normalizedSku, product.purchasePrice);
           }
         });
       }
@@ -215,7 +216,7 @@ export default function DashboardPage() {
             const salesWithTotalValue = detailedSales.map(sale => {
               const totalPurchaseValue = sale.productList?.reduce((sum, product) => {
                 const stock = (typeof product.purchaseStock === 'number' && !isNaN(product.purchaseStock)) ? product.purchaseStock : 0;
-                const price = product.SKU ? priceMap.get(product.SKU) || 0 : 0;
+                const price = product.SKU ? priceMap.get(product.SKU.trim().toLowerCase()) || 0 : 0;
                 return sum + (stock * price);
               }, 0) ?? 0;
               return { ...sale, totalPurchaseValue: totalPurchaseValue };
@@ -349,6 +350,7 @@ export default function DashboardPage() {
                 <TableRow>
                   <TableHead>Date</TableHead>
                   <TableHead>Invoice Number</TableHead>
+
                   <TableHead>Total Purchase Value</TableHead>
                 </TableRow>
               </TableHeader>
@@ -380,3 +382,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
