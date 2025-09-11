@@ -153,9 +153,6 @@ export function LoginForm() {
                   "Sign In"
                 )}
               </Button>
-              <Button variant="outline" className="w-full" asChild>
-                <Link href="#">Create an account</Link>
-              </Button>
             </div>
           </form>
         </CardContent>
