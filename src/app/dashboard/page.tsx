@@ -121,6 +121,11 @@ export default function DashboardPage() {
   const [stores, setStores] = React.useState<Store[]>(initialStores);
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
 
+  const handleStoreChange = (storeId: string) => {
+    setSelectedStore(storeId);
+    setProductMasterData(null);
+    setReports([]);
+  };
 
   React.useEffect(() => {
     const token = localStorage.getItem("accessToken");
@@ -351,7 +356,7 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 items-end gap-4 md:grid-cols-3 lg:grid-cols-5">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Store</label>
-                <Select value={selectedStore} onValueChange={setSelectedStore}>
+                <Select value={selectedStore} onValueChange={handleStoreChange}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a store" />
                   </SelectTrigger>
