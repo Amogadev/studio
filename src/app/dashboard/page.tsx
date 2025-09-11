@@ -316,6 +316,7 @@ export default function DashboardPage() {
   };
 
   const grandTotalPurchaseValue = reports.reduce((total, report) => total + ((typeof report.totalPurchaseValue === 'number' && !isNaN(report.totalPurchaseValue)) ? report.totalPurchaseValue : 0), 0);
+  const productMasterMap = React.useMemo(() => new Map(productMasterData?.productList?.map((p: any) => [p.SKU, p]) ?? []), [productMasterData]);
 
 
   if (!isAuthenticated) {
@@ -525,7 +526,7 @@ export default function DashboardPage() {
 
        {selectedReportDetail && (
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className="max-w-3xl">
             <DialogHeader>
               <DialogTitle>Purchase Details for {format(selectedReportDetail.date, 'PPP')}</DialogTitle>
               <DialogDescription>
@@ -538,15 +539,24 @@ export default function DashboardPage() {
                   <TableRow>
                     <TableHead>SKU</TableHead>
                     <TableHead>Purchase Quantity</TableHead>
+                    <TableHead>Purchase Price</TableHead>
+                    <TableHead>Total</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {selectedReportDetail.productList.filter(p => p.purchaseStock > 0).map((product) => (
-                    <TableRow key={product.SKU}>
-                      <TableCell>{product.SKU}</TableCell>
-                      <TableCell>{product.purchaseStock}</TableCell>
-                    </TableRow>
-                  ))}
+                  {selectedReportDetail.productList.filter(p => p.purchaseStock > 0).map((product) => {
+                    const masterProduct = productMasterMap.get(product.SKU);
+                    const purchasePrice = masterProduct?.purchasePrice ?? 0;
+                    const total = product.purchaseStock * purchasePrice;
+                    return (
+                        <TableRow key={product.SKU}>
+                            <TableCell>{product.SKU}</TableCell>
+                            <TableCell>{product.purchaseStock}</TableCell>
+                            <TableCell>{purchasePrice.toFixed(2)}</TableCell>
+                            <TableCell>{total.toFixed(2)}</TableCell>
+                        </TableRow>
+                    );
+                   })}
                 </TableBody>
               </Table>
             </ScrollArea>
@@ -557,5 +567,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    
