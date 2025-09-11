@@ -38,7 +38,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { cn } from "@/lib/utils";
-import { Calendar as CalendarIcon, Loader2, LogOut } from "lucide-react";
+import { Calendar as CalendarIcon, Loader2, LogOut, Eye } from "lucide-react";
 import { format, addDays } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
@@ -421,6 +421,7 @@ export default function DashboardPage() {
                       <TableHead>Date</TableHead>
                       <TableHead>Total Purchase Stock</TableHead>
                       <TableHead>Total Purchase Value</TableHead>
+                      <TableHead>View</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -432,17 +433,24 @@ export default function DashboardPage() {
                           </TableCell>
                           <TableCell>{(typeof report.totalPurchaseStock === 'number' && !isNaN(report.totalPurchaseStock)) ? report.totalPurchaseStock : '0'}</TableCell>
                           <TableCell>{(typeof report.totalPurchaseValue === 'number' && !isNaN(report.totalPurchaseValue)) ? report.totalPurchaseValue.toFixed(2) : '0.00'}</TableCell>
+                          <TableCell>
+                            {report.totalPurchaseStock > 0 && (
+                              <Button variant="ghost" size="icon">
+                                <Eye className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </TableCell>
                         </TableRow>
                       ))
                     ) : (
                       <TableRow>
-                        <TableCell colSpan={3} className="text-center">No purchases to display.</TableCell>
+                        <TableCell colSpan={4} className="text-center">No purchases to display.</TableCell>
                       </TableRow>
                     )}
                   </TableBody>
                   <TableFooter>
                     <TableRow>
-                      <TableCell colSpan={2} className="text-right font-bold">Grand Total</TableCell>
+                      <TableCell colSpan={3} className="text-right font-bold">Grand Total</TableCell>
                       <TableCell className="font-bold">{grandTotalPurchaseValue.toFixed(2)}</TableCell>
                     </TableRow>
                   </TableFooter>
