@@ -44,6 +44,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { Calendar as CalendarIcon, Loader2, LogOut, Eye } from "lucide-react";
 import { format, addDays } from "date-fns";
@@ -524,29 +525,31 @@ export default function DashboardPage() {
 
        {selectedReportDetail && (
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogContent>
+          <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>Purchase Details for {format(selectedReportDetail.date, 'PPP')}</DialogTitle>
               <DialogDescription>
                 A list of products purchased on this day.
               </DialogDescription>
             </DialogHeader>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>SKU</TableHead>
-                  <TableHead>Purchase Quantity</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {selectedReportDetail.productList.filter(p => p.purchaseStock > 0).map((product) => (
-                  <TableRow key={product.SKU}>
-                    <TableCell>{product.SKU}</TableCell>
-                    <TableCell>{product.purchaseStock}</TableCell>
+            <ScrollArea className="h-[400px]">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>SKU</TableHead>
+                    <TableHead>Purchase Quantity</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {selectedReportDetail.productList.filter(p => p.purchaseStock > 0).map((product) => (
+                    <TableRow key={product.SKU}>
+                      <TableCell>{product.SKU}</TableCell>
+                      <TableCell>{product.purchaseStock}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </ScrollArea>
           </DialogContent>
         </Dialog>
       )}
