@@ -31,6 +31,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 import { cn } from "@/lib/utils";
 import { Calendar as CalendarIcon, Loader2, LogOut } from "lucide-react";
 import { format, addDays } from "date-fns";
@@ -445,33 +451,41 @@ export default function DashboardPage() {
             </Card>
 
             <Card>
-              <CardHeader>
-                <CardTitle className="text-xl">Product Master</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>SKU</TableHead>
-                      <TableHead>Purchase Price</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {productMasterData?.productList?.length > 0 ? (
-                      productMasterData.productList.map((product: any) => (
-                        <TableRow key={product.SKU}>
-                          <TableCell>{product.SKU}</TableCell>
-                          <TableCell>{typeof product.purchasePrice === 'number' ? product.purchasePrice.toFixed(2) : 'N/A'}</TableCell>
-                        </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={2} className="text-center">No product master data to display.</TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </CardContent>
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="item-1">
+                  <AccordionTrigger>
+                    <CardHeader>
+                      <CardTitle className="text-xl">Product Master</CardTitle>
+                    </CardHeader>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <CardContent>
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>SKU</TableHead>
+                            <TableHead>Purchase Price</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {productMasterData?.productList?.length > 0 ? (
+                            productMasterData.productList.map((product: any) => (
+                              <TableRow key={product.SKU}>
+                                <TableCell>{product.SKU}</TableCell>
+                                <TableCell>{typeof product.purchasePrice === 'number' ? product.purchasePrice.toFixed(2) : 'N/A'}</TableCell>
+                              </TableRow>
+                            ))
+                          ) : (
+                            <TableRow>
+                              <TableCell colSpan={2} className="text-center">No product master data to display.</TableCell>
+                            </TableRow>
+                          )}
+                        </TableBody>
+                      </Table>
+                    </CardContent>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
             </Card>
         </div>
       </main>
