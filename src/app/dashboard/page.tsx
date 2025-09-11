@@ -45,8 +45,9 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { Calendar as CalendarIcon, Loader2, LogOut, Eye } from "lucide-react";
+import { Calendar as CalendarIcon, Loader2, LogOut, Eye, Search } from "lucide-react";
 import { format, addDays } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
@@ -114,6 +115,7 @@ export default function DashboardPage() {
   const [productMasterData, setProductMasterData] = React.useState<any | null>(null);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [selectedReportDetail, setSelectedReportDetail] = React.useState<DailyReport | null>(null);
+  const [modalSearchTerm, setModalSearchTerm] = React.useState("");
 
 
   const [stores, setStores] = React.useState<Store[]>(initialStores);
@@ -136,6 +138,7 @@ export default function DashboardPage() {
   
   const handleViewDetails = (report: DailyReport) => {
     setSelectedReportDetail(report);
+    setModalSearchTerm("");
     setIsModalOpen(true);
   };
 
@@ -317,6 +320,15 @@ export default function DashboardPage() {
 
   const grandTotalPurchaseValue = reports.reduce((total, report) => total + ((typeof report.totalPurchaseValue === 'number' && !isNaN(report.totalPurchaseValue)) ? report.totalPurchaseValue : 0), 0);
   const productMasterMap = React.useMemo(() => new Map(productMasterData?.productList?.map((p: any) => [p.SKU, p]) ?? []), [productMasterData]);
+
+  const filteredModalProducts = React.useMemo(() => {
+    if (!selectedReportDetail) return [];
+    return selectedReportDetail.productList.filter(
+      (p) =>
+        p.purchaseStock > 0 &&
+        p.SKU.toLowerCase().includes(modalSearchTerm.toLowerCase())
+    );
+  }, [selectedReportDetail, modalSearchTerm]);
 
 
   if (!isAuthenticated) {
@@ -533,6 +545,16 @@ export default function DashboardPage() {
                 A list of products purchased on this day.
               </DialogDescription>
             </DialogHeader>
+            <div className="relative">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Search products..."
+                className="pl-8"
+                value={modalSearchTerm}
+                onChange={(e) => setModalSearchTerm(e.target.value)}
+              />
+            </div>
             <ScrollArea className="h-[400px]">
               <Table>
                 <TableHeader>
@@ -544,7 +566,7 @@ export default function DashboardPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {selectedReportDetail.productList.filter(p => p.purchaseStock > 0).map((product) => {
+                  {filteredModalProducts.map((product) => {
                     const masterProduct = productMasterMap.get(product.SKU);
                     const purchasePrice = masterProduct?.purchasePrice ?? 0;
                     const total = product.purchaseStock * purchasePrice;
