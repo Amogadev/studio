@@ -23,7 +23,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Shield, Eye, EyeOff } from "lucide-react";
+import { Shield, Eye, EyeOff, Loader2 } from "lucide-react";
 import React from "react";
 
 const formSchema = z.object({
@@ -35,6 +35,7 @@ export function LoginForm() {
   const { toast } = useToast();
   const router = useRouter();
   const [showPassword, setShowPassword] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -44,6 +45,7 @@ export function LoginForm() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsLoading(true);
     try {
       const response = await fetch('https://tnfl2-cb6ea45c64b3.herokuapp.com/services/auth/login', {
         method: 'POST',
@@ -80,6 +82,8 @@ export function LoginForm() {
         title: "An Error Occurred",
         description: "Something went wrong. Please try again later.",
       });
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -139,8 +143,15 @@ export function LoginForm() {
               )}
             />
             <div className="flex flex-col gap-4">
-              <Button type="submit" className="w-full">
-                Sign In
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Please wait
+                  </>
+                ) : (
+                  "Sign In"
+                )}
               </Button>
               <Button variant="outline" className="w-full" asChild>
                 <Link href="#">Create an account</Link>
