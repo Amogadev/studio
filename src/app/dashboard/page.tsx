@@ -23,6 +23,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import {
   Table,
   TableBody,
   TableCell,
@@ -73,12 +80,19 @@ const initialStores = [
   { id: "50", name: "Test Store" },
 ];
 
+interface ProductDetail {
+  SKU: string;
+  purchaseStock: number;
+  [key: string]: any;
+}
+
 interface DailyReport {
     date: Date;
     totalSalesQuantity: number;
     totalPurchaseStock: number;
     totalSaleValue: number;
     totalPurchaseValue: number;
+    productList: ProductDetail[];
 }
 
 
@@ -97,6 +111,9 @@ export default function DashboardPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [productMasterData, setProductMasterData] = React.useState<any | null>(null);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [selectedReportDetail, setSelectedReportDetail] = React.useState<DailyReport | null>(null);
+
 
   const [stores, setStores] = React.useState<Store[]>(initialStores);
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
@@ -114,6 +131,11 @@ export default function DashboardPage() {
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     router.push("/");
+  };
+  
+  const handleViewDetails = (report: DailyReport) => {
+    setSelectedReportDetail(report);
+    setIsModalOpen(true);
   };
 
   const handleGetProductMaster = async () => {
@@ -265,6 +287,7 @@ export default function DashboardPage() {
                 totalPurchaseStock: dayTotalPurchaseStock,
                 totalSaleValue: dayTotalSaleValue,
                 totalPurchaseValue: dayTotalPurchaseValue,
+                productList: day.productList || [],
               };
             });
             setReports(processedReports);
@@ -435,7 +458,7 @@ export default function DashboardPage() {
                           <TableCell>{(typeof report.totalPurchaseValue === 'number' && !isNaN(report.totalPurchaseValue)) ? report.totalPurchaseValue.toFixed(2) : '0.00'}</TableCell>
                           <TableCell>
                             {report.totalPurchaseStock > 0 && (
-                              <Button variant="ghost" size="icon">
+                              <Button variant="ghost" size="icon" onClick={() => handleViewDetails(report)}>
                                 <Eye className="h-4 w-4" />
                               </Button>
                             )}
@@ -498,8 +521,36 @@ export default function DashboardPage() {
             </Card>
         </div>
       </main>
+
+       {selectedReportDetail && (
+        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Purchase Details for {format(selectedReportDetail.date, 'PPP')}</DialogTitle>
+              <DialogDescription>
+                A list of products purchased on this day.
+              </DialogDescription>
+            </DialogHeader>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>SKU</TableHead>
+                  <TableHead>Purchase Quantity</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {selectedReportDetail.productList.filter(p => p.purchaseStock > 0).map((product) => (
+                  <TableRow key={product.SKU}>
+                    <TableCell>{product.SKU}</TableCell>
+                    <TableCell>{product.purchaseStock}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </DialogContent>
+        </Dialog>
+      )}
+
     </div>
   );
 }
-
-    
