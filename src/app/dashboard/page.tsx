@@ -80,6 +80,8 @@ const initialStores = [
   { id: "47", name: "COVAI FRIENDS" },
   { id: "48", name: "FRINEDS SATUUR" },
   { id: "50", name: "Test Store" },
+  { id: "55", name: "raintree" },
+  { id: "56", name: "Hawk" },
 ];
 
 interface ProductDetail {
