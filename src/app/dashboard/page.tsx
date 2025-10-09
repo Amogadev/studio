@@ -48,7 +48,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Calendar as CalendarIcon, Loader2, LogOut, Eye, Search } from "lucide-react";
-import { format, addDays } from "date-fns";
+import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 
@@ -268,7 +268,7 @@ export default function DashboardPage() {
           setReports([]);
         } else {
             const productMap = new Map(productMasterData?.productList?.map((p: any) => [p.SKU, p]) ?? []);
-            const processedReports: DailyReport[] = dayWiseData.map((day: any, index: number) => {
+            const processedReports: DailyReport[] = dayWiseData.map((day: any) => {
               const dayTotalSalesQuantity = day.productList?.reduce((daySum: number, item: any) => {
                  const quantity = (typeof item.sales === 'number' && !isNaN(item.sales)) ? item.sales : 0;
                  return daySum + quantity;
@@ -293,7 +293,7 @@ export default function DashboardPage() {
               }, 0) ?? 0;
               
               return {
-                date: addDays(fromDate, index),
+                date: new Date(day.saleDate * 1000),
                 totalSalesQuantity: dayTotalSalesQuantity,
                 totalPurchaseStock: dayTotalPurchaseStock,
                 totalSaleValue: dayTotalSaleValue,
