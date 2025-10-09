@@ -51,38 +51,8 @@ import { Calendar as CalendarIcon, Loader2, LogOut, Eye, Search } from "lucide-r
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
+import stores from "@/config/stores.json";
 
-const initialStores = [
-  { id: "12", name: "Combai" },
-  { id: "15", name: "Dayton" },
-  { id: "20", name: "Highway" },
-  { id: "22", name: "Mullai" },
-  { id: "23", name: "Nanbargal" },
-  { id: "24", name: "new boys" },
-  { id: "25", name: "lakeview" },
-  { id: "27", name: "royalrc" },
-  { id: "29", name: "vaigai" },
-  { id: "30", name: "Blue Sports" },
-  { id: "32", name: "POLLACHI DIAMOND CLUB" },
-  { id: "33", name: "PRINCE NEW CLUB" },
-  { id: "34", name: "VAIGAI RAMNAD CLUB" },
-  { id: "35", name: "COVAI FIVE STAR" },
-  { id: "36", name: "COVAI MENS CLUB" },
-  { id: "37", name: "Covai thendral" },
-  { id: "38", name: "COVAI KING FHISHER" },
-  { id: "39", name: "COVAI VAIGAI" },
-  { id: "40", name: "COVAI KINGS" },
-  { id: "42", name: "honeybee" },
-  { id: "43", name: "Nanbargal Aranthangi" },
-  { id: "44", name: "Chakra" },
-  { id: "45", name: "JS" },
-  { id: "46", name: "COVAI NO1" },
-  { id: "47", name: "COVAI FRIENDS" },
-  { id: "48", name: "FRINEDS SATUUR" },
-  { id: "50", name: "Test Store" },
-  { id: "55", name: "raintree" },
-  { id: "56", name: "Hawk" },
-];
 
 interface ProductDetail {
   SKU: string;
@@ -120,7 +90,6 @@ export default function DashboardPage() {
   const [modalSearchTerm, setModalSearchTerm] = React.useState("");
 
 
-  const [stores, setStores] = React.useState<Store[]>(initialStores);
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
 
   const handleStoreChange = (storeId: string) => {
@@ -596,5 +565,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    
